@@ -5,7 +5,7 @@ module to_if #(
     USER_WIDTH              // width of user field, must > 0, let synthesizer trim it if not in use
     )
    (
-//                      AXI_BUS.Master outgoing_if,
+                      AXI_BUS.Master outgoing_if,
                       axi_channel.slave incoming_openip
                        );
 
@@ -16,6 +16,8 @@ slave_adapter  #(
     .USER_WIDTH(USER_WIDTH)              // width of user field, must > 0, let synthesizer trim it if not in use
     )
  sadapt(
+  .clk(incoming_openip.clk),
+  .rstn(incoming_openip.rstn),
   .s_axi_awid(incoming_openip.aw_id),
   .s_axi_awaddr(incoming_openip.aw_addr),
   .s_axi_awlen(incoming_openip.aw_len),
@@ -59,8 +61,7 @@ slave_adapter  #(
   .s_axi_rlast(incoming_openip.r_last),
   .s_axi_ruser(incoming_openip.r_user),
   .s_axi_rvalid(incoming_openip.r_valid),
-  .s_axi_rready(incoming_openip.r_ready)
-/*
+  .s_axi_rready(incoming_openip.r_ready),
       .m_axi_awid           ( outgoing_if.aw_id      ),
       .m_axi_awaddr         ( outgoing_if.aw_addr    ),
       .m_axi_awlen          ( outgoing_if.aw_len     ),
@@ -105,7 +106,6 @@ slave_adapter  #(
       .m_axi_ruser          ( outgoing_if.r_user     ),
       .m_axi_rvalid         ( outgoing_if.r_valid    ),
       .m_axi_rready         ( outgoing_if.r_ready    )
-*/
                       );
    
 endmodule // if_converter

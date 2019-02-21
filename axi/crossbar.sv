@@ -36,13 +36,13 @@ import axi_common::*;
 //     cause wider adders to be used therefore will use more resources.
 module axi_crossbar #(
     parameter MASTER_NUM,
-    parameter SLAVE_NUM ,
-    parameter ADDR_WIDTH,
-    parameter [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] BASE = '0,
-    parameter [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] MASK = '0
+    parameter SLAVE_NUM,
+    parameter ADDR_WIDTH
 ) (
     axi_channel.slave  master[MASTER_NUM],
-    axi_channel.master slave [SLAVE_NUM]
+    axi_channel.master slave [SLAVE_NUM],
+    input logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] BASE,
+    input logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] MASK
 );
 
     for (genvar i = 0; i < MASTER_NUM; i++) begin: demux
@@ -58,10 +58,8 @@ module axi_crossbar #(
 
         axi_demux_raw #(
             .SLAVE_NUM  (SLAVE_NUM),
-            .ADDR_WIDTH (ADDR_WIDTH),
-            .BASE       (BASE),
-            .MASK       (MASK)
-        ) demux (master_buf, channels);
+            .ADDR_WIDTH (ADDR_WIDTH)
+        ) demux (.master(master_buf), .slave(channels), .BASE, .MASK);
 
         axi_regslice #(
             .AW_MODE (0),
@@ -69,7 +67,7 @@ module axi_crossbar #(
             . B_MODE (0),
             .AR_MODE (0),
             . R_MODE (1)
-        ) master_slice (master[i], master_buf);
+        ) master_slice (.master(master[i]), .slave(master_buf));
     end
 
     for (genvar i = 0; i < SLAVE_NUM; i++) begin: mux
@@ -78,7 +76,7 @@ module axi_crossbar #(
             .ADDR_WIDTH (ADDR_WIDTH),
             .DATA_WIDTH (slave[i].DATA_WIDTH)
         ) channels[MASTER_NUM] (
-            slave[i].clk, slave[i].rstn
+            .clk(slave[i].clk), .rstn(slave[i].rstn)
         );
 
         axi_channel #(
@@ -86,10 +84,10 @@ module axi_crossbar #(
             .ADDR_WIDTH (ADDR_WIDTH),
             .DATA_WIDTH (slave[i].DATA_WIDTH)
         ) slave_buf(
-            slave[i].clk, slave[i].rstn
+            .clk(slave[i].clk), .rstn(slave[i].rstn)
         );
 
-        axi_mux_raw #(.MASTER_NUM (MASTER_NUM)) mux (channels, slave_buf);
+        axi_mux_raw #(.MASTER_NUM (MASTER_NUM)) mux (.master(channels), .slave(slave_buf));
 
         axi_regslice #(
             .AW_MODE (0),
@@ -97,10 +95,10 @@ module axi_crossbar #(
             . B_MODE (2),
             .AR_MODE (0),
             . R_MODE (2)
-        ) slice (slave_buf, slave[i]);
+        ) slice (.master(slave_buf), .slave(slave[i]));
 
         for (genvar j = 0; j < MASTER_NUM; j++) begin
-            axi_join joiner(demux[j].channels[i], channels[j]);
+            axi_join joiner(.master(demux[j].channels[i]), .slave(channels[j]));
         end
     end
 

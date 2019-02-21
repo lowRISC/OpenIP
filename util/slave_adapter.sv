@@ -7,6 +7,8 @@ module slave_adapter
     LITE_MODE = 0                // whether work in Lite mode
     )
 (
+  input                    clk,
+  input                    rstn,
   input [ID_WIDTH-1:0]     s_axi_awid,
   input [ADDR_WIDTH-1:0]   s_axi_awaddr,
   input [7:0]              s_axi_awlen,
@@ -141,5 +143,53 @@ assign m_axi_arqos = s_axi_arqos;
 assign m_axi_aruser = s_axi_aruser;
 assign m_axi_arvalid = s_axi_arvalid;
 assign m_axi_rready = s_axi_rready;
+
+xlnx_ila_axi_0 ila_axi (
+	.clk(clk), // input wire clk
+	.probe0(s_axi_wready), // input wire [0:0] probe0  
+	.probe1(s_axi_awaddr), // input wire [63:0]  probe1 
+	.probe2(s_axi_bresp), // input wire [1:0]  probe2 
+	.probe3(s_axi_bvalid), // input wire [0:0]  probe3 
+	.probe4(s_axi_bready), // input wire [0:0]  probe4 
+	.probe5(s_axi_araddr), // input wire [63:0]  probe5 
+	.probe6(s_axi_rready), // input wire [0:0]  probe6 
+	.probe7(s_axi_wvalid), // input wire [0:0]  probe7 
+	.probe8(s_axi_arvalid), // input wire [0:0]  probe8 
+	.probe9(s_axi_arready), // input wire [0:0]  probe9 
+	.probe10(s_axi_rdata), // input wire [63:0]  probe10 
+	.probe11(s_axi_awvalid), // input wire [0:0]  probe11 
+	.probe12(s_axi_awready), // input wire [0:0]  probe12 
+	.probe13(s_axi_rresp), // input wire [1:0]  probe13 
+	.probe14(s_axi_wdata), // input wire [63:0]  probe14 
+	.probe15(s_axi_wstrb), // input wire [7:0]  probe15 
+	.probe16(s_axi_rvalid), // input wire [0:0]  probe16 
+	.probe17(s_axi_arprot), // input wire [2:0]  probe17 
+	.probe18(s_axi_awprot), // input wire [2:0]  probe18 
+	.probe19(s_axi_awid), // input wire [4:0]  probe19 
+	.probe20(s_axi_bid), // input wire [4:0]  probe20 
+	.probe21(s_axi_awlen), // input wire [7:0]  probe21 
+	.probe22(s_axi_buser), // input wire [0:0]  probe22 
+	.probe23(s_axi_awsize), // input wire [2:0]  probe23 
+	.probe24(s_axi_awburst), // input wire [1:0]  probe24 
+	.probe25(s_axi_arid), // input wire [4:0]  probe25 
+	.probe26(s_axi_awlock), // input wire [0:0]  probe26 
+	.probe27(s_axi_arlen), // input wire [7:0]  probe27 
+	.probe28(s_axi_arsize), // input wire [2:0]  probe28 
+	.probe29(s_axi_arburst), // input wire [1:0]  probe29 
+	.probe30(s_axi_arlock), // input wire [0:0]  probe30 
+	.probe31(s_axi_arcache), // input wire [3:0]  probe31 
+	.probe32(s_axi_awcache), // input wire [3:0]  probe32 
+	.probe33(s_axi_arregion), // input wire [3:0]  probe33 
+	.probe34(s_axi_arqos), // input wire [3:0]  probe34 
+	.probe35(s_axi_aruser), // input wire [0:0]  probe35 
+	.probe36(s_axi_awregion), // input wire [3:0]  probe36 
+	.probe37(s_axi_awqos), // input wire [3:0]  probe37 
+	.probe38(s_axi_rid), // input wire [4:0]  probe38 
+	.probe39(s_axi_awuser), // input wire [0:0]  probe39 
+	.probe40(s_axi_wuser), // input wire [0:0]  probe40 
+	.probe41(s_axi_rlast), // input wire [0:0]  probe41 
+	.probe42(s_axi_ruser), // input wire [0:0]  probe42  
+	.probe43(s_axi_wlast) // input wire [0:0]  probe43
+);
    
 endmodule

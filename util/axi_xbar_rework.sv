@@ -19,24 +19,26 @@
 //
 // Revision: Under version-control
 
-module axi_xbar_rework ();
-   
-    parameter NB_MASTER = 9;
-    parameter NB_SLAVE = 2;
-    parameter AXI_ADDR_WIDTH = 64;
-    parameter AXI_DATA_WIDTH = 64;
-    parameter AXI_ID_WIDTH = 4;
-    parameter AXI_USER_WIDTH = 1;
-    parameter MASTER_SLICE_DEPTH = 1;
-    parameter SLAVE_SLICE_DEPTH  = 1;
-
-    logic      clk;
-    logic      rst_n;
-    logic      test_en_i;
+module axi_xbar_rework #(
+    parameter NB_MASTER,
+    parameter NB_SLAVE,
+    parameter AXI_ADDR_WIDTH,
+    parameter AXI_DATA_WIDTH,
+    parameter AXI_ID_WIDTH,
+    parameter AXI_USER_WIDTH,
+    parameter MASTER_SLICE_DEPTH = 1,
+    parameter SLAVE_SLICE_DEPTH  = 1
+)(
+    input logic      clk,
+    input logic      rst_n,
+    input logic      test_en_i,
+    AXI_BUS.Slave    slave  [NB_SLAVE-1:0],
+    AXI_BUS.Master   master [NB_MASTER-1:0],
     // Memory map
-    logic [NB_MASTER-1:0][AXI_ADDR_WIDTH-1:0] start_addr_i;
-    logic [NB_MASTER-1:0][AXI_ADDR_WIDTH-1:0]  end_addr_i;
-
+    input  logic [NB_MASTER-1:0][AXI_ADDR_WIDTH-1:0] start_addr_i,
+    input  logic [NB_MASTER-1:0][AXI_ADDR_WIDTH-1:0] end_addr_i
+);
+   
     localparam AXI_ID_OUT = AXI_ID_WIDTH + $clog2(NB_SLAVE);
     logic [NB_MASTER-1:0][AXI_ADDR_WIDTH-1:0] start_addr;
     logic [NB_MASTER-1:0][AXI_ADDR_WIDTH-1:0] mask_addr;
@@ -59,7 +61,7 @@ module axi_xbar_rework ();
             .rstn(rst_n)
                       );   
 
-    for (genvar i = 0; i < NB_SLAVE; i++)
+    for (genvar i = 0; i < NB_SLAVE; i=i+1)
       begin
          from_if  #(
                     .ADDR_WIDTH(AXI_ADDR_WIDTH),
@@ -68,12 +70,12 @@ module axi_xbar_rework ();
                     .DATA_WIDTH(AXI_DATA_WIDTH)
                     ) from_if_adapter
          (
-//          .incoming_if(slave[i]),
+          .incoming_if(slave[i]),
           .outgoing_openip(slave_buf[i])                       
           );
       end
 
-    for (genvar i = 0; i < NB_MASTER; i++)
+    for (genvar i = 0; i < NB_MASTER; i=i+1)
       begin
          to_if  #(
                     .ADDR_WIDTH(AXI_ADDR_WIDTH),
@@ -82,11 +84,11 @@ module axi_xbar_rework ();
                     .DATA_WIDTH(AXI_DATA_WIDTH)
                     ) to_if_adapter
          (
-//          .outgoing_if(master[i]),
+          .outgoing_if(master[i]),
           .incoming_openip(master_buf[i])                       
           );
-      assign mask_addr[NB_MASTER-1-i] = end_addr_i[i] - start_addr_i[i];
-      assign start_addr[NB_MASTER-1-i] = start_addr_i[i];
+      assign mask_addr[i] = end_addr_i[i] - start_addr_i[i];
+      assign start_addr[i] = start_addr_i[i];
       end
 
 axi_crossbar #(
@@ -95,11 +97,9 @@ axi_crossbar #(
     .ADDR_WIDTH(AXI_ADDR_WIDTH)
 ) openip_xbar (
     .master(slave_buf),
-    .slave(master_buf)
-/*
+    .slave(master_buf),
     .BASE(start_addr),
-    .MASK(mask_addr)  
-*/              
+    .MASK(mask_addr)               
 );
    
 endmodule

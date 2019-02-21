@@ -40,12 +40,12 @@ module axi_demux_raw #(
     parameter SLAVE_NUM,
     // Ideally we would like to remove this but it is required by type of BASE and MASK
     parameter ADDR_WIDTH,
-    parameter ACTIVE_CNT_WIDTH = 4,
-    parameter [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] BASE = '0,
-    parameter [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] MASK = '0
+    parameter ACTIVE_CNT_WIDTH = 8
 ) (
     axi_channel.slave  master,
-    axi_channel.master slave [SLAVE_NUM]
+    axi_channel.master slave [SLAVE_NUM],
+    input logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] BASE,
+    input logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] MASK
 );
 
     localparam SLAVE_WIDTH = $clog2(SLAVE_NUM);
@@ -205,7 +205,7 @@ module axi_demux_raw #(
             for (int i = 0; i < 2**master.ID_WIDTH; i++) begin
                 if (w_cnt_incr[i]) begin
                     write_map[i].active_slave <= aw_match_bin;
-                    if (!w_cnt_decr) write_map[i].active_cnt <= write_map[i].active_cnt + 1;
+                    if (!w_cnt_decr[i]) write_map[i].active_cnt <= write_map[i].active_cnt + 1;
                 end
                 else if (w_cnt_decr[i]) begin
                     write_map[i].active_cnt <= write_map[i].active_cnt - 1;
@@ -341,7 +341,7 @@ module axi_demux_raw #(
             for (int i = 0; i < 2**master.ID_WIDTH; i++) begin
                 if (r_cnt_incr[i]) begin
                     read_map[i].active_slave <= ar_match_bin;
-                    if (!r_cnt_decr) read_map[i].active_cnt <= read_map[i].active_cnt + 1;
+                    if (!r_cnt_decr[i]) read_map[i].active_cnt <= read_map[i].active_cnt + 1;
                 end
                 else if (r_cnt_decr[i]) begin
                     read_map[i].active_cnt <= read_map[i].active_cnt - 1;
@@ -423,13 +423,13 @@ endmodule
 module axi_demux #(
     parameter SLAVE_NUM,
     // Ideally we would like to remove this but it is required by type of BASE and MASK
-    parameter ADDR_WIDTH       = -1,
-    parameter ACTIVE_CNT_WIDTH = 4,
-    parameter [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] BASE = '0,
-    parameter [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] MASK = '0
+    parameter ADDR_WIDTH,
+    parameter ACTIVE_CNT_WIDTH = 4
 ) (
     axi_channel.slave  master,
-    axi_channel.master slave [SLAVE_NUM]
+    axi_channel.master slave [SLAVE_NUM],
+    logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] BASE,
+    logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] MASK
 );
 
     axi_channel #(
@@ -447,10 +447,8 @@ module axi_demux #(
     axi_demux_raw #(
         .SLAVE_NUM        (SLAVE_NUM),
         .ADDR_WIDTH       (ADDR_WIDTH),
-        .ACTIVE_CNT_WIDTH (ACTIVE_CNT_WIDTH),
-        .BASE             (BASE),
-        .MASK             (MASK)
-    ) mux (master_buf, slave_buf);
+        .ACTIVE_CNT_WIDTH (ACTIVE_CNT_WIDTH)
+    ) mux (.master(master_buf), .slave(slave_buf), .BASE, .MASK);
 
     axi_regslice #(
         .AW_MODE (0),

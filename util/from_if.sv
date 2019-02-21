@@ -5,7 +5,7 @@ module from_if #(
     USER_WIDTH              // width of user field, must > 0, let synthesizer trim it if not in use
     )
 (
-//                      AXI_BUS.Slave incoming_if,
+                      AXI_BUS.Slave incoming_if,
                       axi_channel.master outgoing_openip
                        );
 
@@ -17,7 +17,8 @@ slave_adapter
     .USER_WIDTH(USER_WIDTH)              // width of user field, must > 0, let synthesizer trim it if not in use
     )
  sadapt(
-/*
+  .clk(outgoing_openip.clk),
+  .rstn(outgoing_openip.rstn),
   .s_axi_awid(incoming_if.aw_id),
   .s_axi_awaddr(incoming_if.aw_addr),
   .s_axi_awlen(incoming_if.aw_len),
@@ -62,7 +63,6 @@ slave_adapter
   .s_axi_ruser(incoming_if.r_user),
   .s_axi_rvalid(incoming_if.r_valid),
   .s_axi_rready(incoming_if.r_ready),
-*/
       .m_axi_awid           ( outgoing_openip.aw_id      ),
       .m_axi_awaddr         ( outgoing_openip.aw_addr    ),
       .m_axi_awlen          ( outgoing_openip.aw_len     ),
