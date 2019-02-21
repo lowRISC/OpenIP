@@ -191,5 +191,64 @@ xlnx_ila_axi_0 ila_axi (
 	.probe42(s_axi_ruser), // input wire [0:0]  probe42  
 	.probe43(s_axi_wlast) // input wire [0:0]  probe43
 );
+
+wire [159 : 0]          pc_status;
+wire                    pc_asserted;
+   
+xlnx_ila ila_proto (
+        .clk(clk),                   // input wire clk
+        .probe0(pc_status),          // input wire [159:0]  probe0
+        .probe1(pc_asserted));       // input wire [0:0]  probe1 
+
+xlnx_proto_check proto1 (
+  .pc_status(pc_status),             // output wire [159 : 0] pc_status
+  .pc_asserted(pc_asserted),         // output wire pc_asserted
+  .aclk(clk),                        // input wire aclk
+  .aresetn(rstn),                    // input wire aresetn
+  .pc_axi_awid(s_axi_awid),          // input wire [4 : 0] pc_axi_awid
+  .pc_axi_awaddr(s_axi_awaddr),      // input wire [63 : 0] pc_axi_awaddr
+  .pc_axi_awlen(s_axi_awlen),        // input wire [7 : 0] pc_axi_awlen
+  .pc_axi_awsize(s_axi_awsize),      // input wire [2 : 0] pc_axi_awsize
+  .pc_axi_awburst(s_axi_awburst),    // input wire [1 : 0] pc_axi_awburst
+  .pc_axi_awlock(s_axi_awlock),      // input wire [0 : 0] pc_axi_awlock
+  .pc_axi_awcache(s_axi_awcache),    // input wire [3 : 0] pc_axi_awcache
+  .pc_axi_awprot(s_axi_awprot),      // input wire [2 : 0] pc_axi_awprot
+  .pc_axi_awqos(s_axi_awqos),        // input wire [3 : 0] pc_axi_awqos
+  .pc_axi_awregion(s_axi_awregion),  // input wire [3 : 0] pc_axi_awregion
+  .pc_axi_awuser(s_axi_awuser),      // input wire [0 : 0] pc_axi_awuser
+  .pc_axi_awvalid(s_axi_awvalid),    // input wire pc_axi_awvalid
+  .pc_axi_awready(s_axi_awready),    // input wire pc_axi_awready
+  .pc_axi_wlast(s_axi_wlast),        // input wire pc_axi_wlast
+  .pc_axi_wdata(s_axi_wdata),        // input wire [63 : 0] pc_axi_wdata
+  .pc_axi_wstrb(s_axi_wstrb),        // input wire [7 : 0] pc_axi_wstrb
+  .pc_axi_wuser(s_axi_wuser),        // input wire [0 : 0] pc_axi_wuser
+  .pc_axi_wvalid(s_axi_wvalid),      // input wire pc_axi_wvalid
+  .pc_axi_wready(s_axi_wready),      // input wire pc_axi_wready
+  .pc_axi_bid(s_axi_bid),            // input wire [4 : 0] pc_axi_bid
+  .pc_axi_bresp(s_axi_bresp),        // input wire [1 : 0] pc_axi_bresp
+  .pc_axi_buser(s_axi_buser),        // input wire [0 : 0] pc_axi_buser
+  .pc_axi_bvalid(s_axi_bvalid),      // input wire pc_axi_bvalid
+  .pc_axi_bready(s_axi_bready),      // input wire pc_axi_bready
+  .pc_axi_arid(s_axi_arid),          // input wire [4 : 0] pc_axi_arid
+  .pc_axi_araddr(s_axi_araddr),      // input wire [63 : 0] pc_axi_araddr
+  .pc_axi_arlen(s_axi_arlen),        // input wire [7 : 0] pc_axi_arlen
+  .pc_axi_arsize(s_axi_arsize),      // input wire [2 : 0] pc_axi_arsize
+  .pc_axi_arburst(s_axi_arburst),    // input wire [1 : 0] pc_axi_arburst
+  .pc_axi_arlock(s_axi_arlock),      // input wire [0 : 0] pc_axi_arlock
+  .pc_axi_arcache(s_axi_arcache),    // input wire [3 : 0] pc_axi_arcache
+  .pc_axi_arprot(s_axi_arprot),      // input wire [2 : 0] pc_axi_arprot
+  .pc_axi_arqos(s_axi_arqos),        // input wire [3 : 0] pc_axi_arqos
+  .pc_axi_arregion(s_axi_arregion),  // input wire [3 : 0] pc_axi_arregion
+  .pc_axi_aruser(s_axi_aruser),      // input wire [0 : 0] pc_axi_aruser
+  .pc_axi_arvalid(s_axi_arvalid),    // input wire pc_axi_arvalid
+  .pc_axi_arready(s_axi_arready),    // input wire pc_axi_arready
+  .pc_axi_rid(s_axi_rid),            // input wire [4 : 0] pc_axi_rid
+  .pc_axi_rlast(s_axi_rlast),        // input wire pc_axi_rlast
+  .pc_axi_rdata(s_axi_rdata),        // input wire [63 : 0] pc_axi_rdata
+  .pc_axi_rresp(s_axi_rresp),        // input wire [1 : 0] pc_axi_rresp
+  .pc_axi_ruser(s_axi_ruser),        // input wire [0 : 0] pc_axi_ruser
+  .pc_axi_rvalid(s_axi_rvalid),      // input wire pc_axi_rvalid
+  .pc_axi_rready(s_axi_rready)       // input wire pc_axi_rready
+);
    
 endmodule

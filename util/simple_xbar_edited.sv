@@ -2998,6 +2998,63 @@ module slave_adapter (
         .probe42(s_axi_ruser),
         .probe43(s_axi_wlast)
     );
+    wire logic[159:0] pc_status;
+    wire logic pc_asserted;
+    xlnx_ila ila_proto (
+        .clk(clk),
+        .probe0(pc_status),
+        .probe1(pc_asserted)
+    );
+    xlnx_proto_check proto1 (
+        .pc_status(pc_status),
+        .pc_asserted(pc_asserted),
+        .aclk(clk),
+        .aresetn(rstn),
+        .pc_axi_awid(s_axi_awid),
+        .pc_axi_awaddr(s_axi_awaddr),
+        .pc_axi_awlen(s_axi_awlen),
+        .pc_axi_awsize(s_axi_awsize),
+        .pc_axi_awburst(s_axi_awburst),
+        .pc_axi_awlock(s_axi_awlock),
+        .pc_axi_awcache(s_axi_awcache),
+        .pc_axi_awprot(s_axi_awprot),
+        .pc_axi_awqos(s_axi_awqos),
+        .pc_axi_awregion(s_axi_awregion),
+        .pc_axi_awuser(s_axi_awuser),
+        .pc_axi_awvalid(s_axi_awvalid),
+        .pc_axi_awready(s_axi_awready),
+        .pc_axi_wlast(s_axi_wlast),
+        .pc_axi_wdata(s_axi_wdata),
+        .pc_axi_wstrb(s_axi_wstrb),
+        .pc_axi_wuser(s_axi_wuser),
+        .pc_axi_wvalid(s_axi_wvalid),
+        .pc_axi_wready(s_axi_wready),
+        .pc_axi_bid(s_axi_bid),
+        .pc_axi_bresp(s_axi_bresp),
+        .pc_axi_buser(s_axi_buser),
+        .pc_axi_bvalid(s_axi_bvalid),
+        .pc_axi_bready(s_axi_bready),
+        .pc_axi_arid(s_axi_arid),
+        .pc_axi_araddr(s_axi_araddr),
+        .pc_axi_arlen(s_axi_arlen),
+        .pc_axi_arsize(s_axi_arsize),
+        .pc_axi_arburst(s_axi_arburst),
+        .pc_axi_arlock(s_axi_arlock),
+        .pc_axi_arcache(s_axi_arcache),
+        .pc_axi_arprot(s_axi_arprot),
+        .pc_axi_arqos(s_axi_arqos),
+        .pc_axi_arregion(s_axi_arregion),
+        .pc_axi_aruser(s_axi_aruser),
+        .pc_axi_arvalid(s_axi_arvalid),
+        .pc_axi_arready(s_axi_arready),
+        .pc_axi_rid(s_axi_rid),
+        .pc_axi_rlast(s_axi_rlast),
+        .pc_axi_rdata(s_axi_rdata),
+        .pc_axi_rresp(s_axi_rresp),
+        .pc_axi_ruser(s_axi_ruser),
+        .pc_axi_rvalid(s_axi_rvalid),
+        .pc_axi_rready(s_axi_rready)
+    );
 endmodule
 module slave_adapter_1 (
     input wire logic clk,
@@ -3187,8 +3244,69 @@ module slave_adapter_1 (
         .probe42(s_axi_ruser),
         .probe43(s_axi_wlast)
     );
+    wire logic[159:0] pc_status;
+    wire logic pc_asserted;
+    xlnx_ila ila_proto (
+        .clk(clk),
+        .probe0(pc_status),
+        .probe1(pc_asserted)
+    );
+    xlnx_proto_check proto1 (
+        .pc_status(pc_status),
+        .pc_asserted(pc_asserted),
+        .aclk(clk),
+        .aresetn(rstn),
+        .pc_axi_awid(s_axi_awid),
+        .pc_axi_awaddr(s_axi_awaddr),
+        .pc_axi_awlen(s_axi_awlen),
+        .pc_axi_awsize(s_axi_awsize),
+        .pc_axi_awburst(s_axi_awburst),
+        .pc_axi_awlock(s_axi_awlock),
+        .pc_axi_awcache(s_axi_awcache),
+        .pc_axi_awprot(s_axi_awprot),
+        .pc_axi_awqos(s_axi_awqos),
+        .pc_axi_awregion(s_axi_awregion),
+        .pc_axi_awuser(s_axi_awuser),
+        .pc_axi_awvalid(s_axi_awvalid),
+        .pc_axi_awready(s_axi_awready),
+        .pc_axi_wlast(s_axi_wlast),
+        .pc_axi_wdata(s_axi_wdata),
+        .pc_axi_wstrb(s_axi_wstrb),
+        .pc_axi_wuser(s_axi_wuser),
+        .pc_axi_wvalid(s_axi_wvalid),
+        .pc_axi_wready(s_axi_wready),
+        .pc_axi_bid(s_axi_bid),
+        .pc_axi_bresp(s_axi_bresp),
+        .pc_axi_buser(s_axi_buser),
+        .pc_axi_bvalid(s_axi_bvalid),
+        .pc_axi_bready(s_axi_bready),
+        .pc_axi_arid(s_axi_arid),
+        .pc_axi_araddr(s_axi_araddr),
+        .pc_axi_arlen(s_axi_arlen),
+        .pc_axi_arsize(s_axi_arsize),
+        .pc_axi_arburst(s_axi_arburst),
+        .pc_axi_arlock(s_axi_arlock),
+        .pc_axi_arcache(s_axi_arcache),
+        .pc_axi_arprot(s_axi_arprot),
+        .pc_axi_arqos(s_axi_arqos),
+        .pc_axi_arregion(s_axi_arregion),
+        .pc_axi_aruser(s_axi_aruser),
+        .pc_axi_arvalid(s_axi_arvalid),
+        .pc_axi_arready(s_axi_arready),
+        .pc_axi_rid(s_axi_rid),
+        .pc_axi_rlast(s_axi_rlast),
+        .pc_axi_rdata(s_axi_rdata),
+        .pc_axi_rresp(s_axi_rresp),
+        .pc_axi_ruser(s_axi_ruser),
+        .pc_axi_rvalid(s_axi_rvalid),
+        .pc_axi_rready(s_axi_rready)
+    );
 endmodule
 
 /* file: ../ram/simple_wr.sv */
 /* file: xlnx_ila_axi_0_stub_edited.v */
+
+/* file: xlnx_proto_check_stub_edited.v */
+
+/* file: xlnx_ila_stub_edited.v */
 
