@@ -16,6 +16,10 @@
 
 module xlnx_ila_axi_0(
   input        clk,
+  output       trig_out,
+  input        trig_out_ack,
+  input        trig_in,
+  output       trig_in_ack,
   input [0:0]  probe0,
   input [63:0] probe1,
   input [1:0]  probe2,

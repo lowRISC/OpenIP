@@ -2951,8 +2951,16 @@ module slave_adapter (
     assign m_axi_aruser = s_axi_aruser;
     assign m_axi_arvalid = s_axi_arvalid;
     assign m_axi_rready = s_axi_rready;
+    wire logic trig_out_axi;
+    wire logic trig_out_ack_axi;
+    wire logic trig_in_axi;
+    wire logic trig_in_ack_axi;
     xlnx_ila_axi_0 ila_axi (
         .clk(clk),
+        .trig_out(trig_out_axi),
+        .trig_out_ack(trig_out_ack_axi),
+        .trig_in(trig_in_axi),
+        .trig_in_ack(trig_in_ack_axi),
         .probe0(s_axi_wready),
         .probe1(s_axi_awaddr),
         .probe2(s_axi_bresp),
@@ -3002,6 +3010,10 @@ module slave_adapter (
     wire logic pc_asserted;
     xlnx_ila ila_proto (
         .clk(clk),
+        .trig_out(trig_in_axi),
+        .trig_out_ack(trig_in_ack_axi),
+        .trig_in(trig_out_axi),
+        .trig_in_ack(trig_out_ack_axi),
         .probe0(pc_status),
         .probe1(pc_asserted)
     );
@@ -3197,8 +3209,16 @@ module slave_adapter_1 (
     assign m_axi_aruser = s_axi_aruser;
     assign m_axi_arvalid = s_axi_arvalid;
     assign m_axi_rready = s_axi_rready;
+    wire logic trig_out_axi;
+    wire logic trig_out_ack_axi;
+    wire logic trig_in_axi;
+    wire logic trig_in_ack_axi;
     xlnx_ila_axi_0 ila_axi (
         .clk(clk),
+        .trig_out(trig_out_axi),
+        .trig_out_ack(trig_out_ack_axi),
+        .trig_in(trig_in_axi),
+        .trig_in_ack(trig_in_ack_axi),
         .probe0(s_axi_wready),
         .probe1(s_axi_awaddr),
         .probe2(s_axi_bresp),
@@ -3248,6 +3268,10 @@ module slave_adapter_1 (
     wire logic pc_asserted;
     xlnx_ila ila_proto (
         .clk(clk),
+        .trig_out(trig_in_axi),
+        .trig_out_ack(trig_in_ack_axi),
+        .trig_in(trig_out_axi),
+        .trig_in_ack(trig_out_ack_axi),
         .probe0(pc_status),
         .probe1(pc_asserted)
     );

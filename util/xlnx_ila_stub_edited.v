@@ -12,6 +12,10 @@
 
 module xlnx_ila(
   input         clk,
+  output        trig_out,
+  input         trig_out_ack,
+  input         trig_in,
+  output        trig_in_ack,
   input [159:0] probe0,
   input [0:0]   probe1);
    

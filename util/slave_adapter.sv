@@ -144,19 +144,25 @@ assign m_axi_aruser = s_axi_aruser;
 assign m_axi_arvalid = s_axi_arvalid;
 assign m_axi_rready = s_axi_rready;
 
+wire trig_out_axi, trig_out_ack_axi, trig_in_axi, trig_in_ack_axi;
+
 xlnx_ila_axi_0 ila_axi (
 	.clk(clk), // input wire clk
-	.probe0(s_axi_wready), // input wire [0:0] probe0  
-	.probe1(s_axi_awaddr), // input wire [63:0]  probe1 
-	.probe2(s_axi_bresp), // input wire [1:0]  probe2 
-	.probe3(s_axi_bvalid), // input wire [0:0]  probe3 
-	.probe4(s_axi_bready), // input wire [0:0]  probe4 
-	.probe5(s_axi_araddr), // input wire [63:0]  probe5 
-	.probe6(s_axi_rready), // input wire [0:0]  probe6 
-	.probe7(s_axi_wvalid), // input wire [0:0]  probe7 
-	.probe8(s_axi_arvalid), // input wire [0:0]  probe8 
-	.probe9(s_axi_arready), // input wire [0:0]  probe9 
-	.probe10(s_axi_rdata), // input wire [63:0]  probe10 
+	.trig_out(trig_out_axi),// output wire trig_out 
+	.trig_out_ack(trig_out_ack_axi),// input wire trig_out_ack 
+	.trig_in(trig_in_axi),// input wire trig_in 
+	.trig_in_ack(trig_in_ack_axi),// output wire trig_in_ack 
+	.probe0(s_axi_wready),   // input wire [0:0] probe0  
+	.probe1(s_axi_awaddr),   // input wire [63:0]  probe1 
+	.probe2(s_axi_bresp),    // input wire [1:0]  probe2 
+	.probe3(s_axi_bvalid),   // input wire [0:0]  probe3 
+	.probe4(s_axi_bready),   // input wire [0:0]  probe4 
+	.probe5(s_axi_araddr),   // input wire [63:0]  probe5 
+	.probe6(s_axi_rready),   // input wire [0:0]  probe6 
+	.probe7(s_axi_wvalid),   // input wire [0:0]  probe7 
+	.probe8(s_axi_arvalid),  // input wire [0:0]  probe8 
+	.probe9(s_axi_arready),  // input wire [0:0]  probe9 
+	.probe10(s_axi_rdata),   // input wire [63:0]  probe10 
 	.probe11(s_axi_awvalid), // input wire [0:0]  probe11 
 	.probe12(s_axi_awready), // input wire [0:0]  probe12 
 	.probe13(s_axi_rresp), // input wire [1:0]  probe13 
@@ -196,9 +202,13 @@ wire [159 : 0]          pc_status;
 wire                    pc_asserted;
    
 xlnx_ila ila_proto (
-        .clk(clk),                   // input wire clk
-        .probe0(pc_status),          // input wire [159:0]  probe0
-        .probe1(pc_asserted));       // input wire [0:0]  probe1 
+     .clk(clk),                      // input wire clk
+     .trig_out(trig_in_axi),         // output wire trig_out 
+     .trig_out_ack(trig_in_ack_axi), // input wire trig_out_ack 
+     .trig_in(trig_out_axi),         // input wire trig_in 
+     .trig_in_ack(trig_out_ack_axi), // output wire trig_in_ack 
+     .probe0(pc_status),             // input wire [159:0]  probe0
+     .probe1(pc_asserted));          // input wire [0:0]  probe1 
 
 xlnx_proto_check proto1 (
   .pc_status(pc_status),             // output wire [159 : 0] pc_status
