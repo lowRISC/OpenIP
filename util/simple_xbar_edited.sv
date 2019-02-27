@@ -2951,6 +2951,7 @@ module slave_adapter (
     assign m_axi_aruser = s_axi_aruser;
     assign m_axi_arvalid = s_axi_arvalid;
     assign m_axi_rready = s_axi_rready;
+`ifdef PROTO_CHECK   
     wire logic trig_out_axi;
     wire logic trig_out_ack_axi;
     wire logic trig_in_axi;
@@ -3067,6 +3068,7 @@ module slave_adapter (
         .pc_axi_rvalid(s_axi_rvalid),
         .pc_axi_rready(s_axi_rready)
     );
+`endif   
 endmodule
 module slave_adapter_1 (
     input wire logic clk,
@@ -3209,6 +3211,7 @@ module slave_adapter_1 (
     assign m_axi_aruser = s_axi_aruser;
     assign m_axi_arvalid = s_axi_arvalid;
     assign m_axi_rready = s_axi_rready;
+`ifdef PROTO_CHECK
     wire logic trig_out_axi;
     wire logic trig_out_ack_axi;
     wire logic trig_in_axi;
@@ -3325,6 +3328,7 @@ module slave_adapter_1 (
         .pc_axi_rvalid(s_axi_rvalid),
         .pc_axi_rready(s_axi_rready)
     );
+`endif
 endmodule
 
 /* file: ../ram/simple_wr.sv */
