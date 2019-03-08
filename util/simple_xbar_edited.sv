@@ -797,12 +797,12 @@ module axi_crossbar (
         .slave(slave_0)
     );
     localparam integer mux_0_genblk1_0_j = 0;
-    axi_join mux_0_genblk1_0_joiner (
+    axi_join_ mux_0_genblk1_0_joiner (
         .master(demux_0_channels_0),
         .slave(mux_0_channels_0)
     );
     localparam integer mux_0_genblk1_1_j = 1;
-    axi_join mux_0_genblk1_1_joiner (
+    axi_join_ mux_0_genblk1_1_joiner (
         .master(demux_1_channels_0),
         .slave(mux_0_channels_1)
     );
@@ -829,12 +829,12 @@ module axi_crossbar (
         .slave(slave_1)
     );
     localparam integer mux_1_genblk1_0_j = 0;
-    axi_join mux_1_genblk1_0_joiner (
+    axi_join_ mux_1_genblk1_0_joiner (
         .master(demux_0_channels_1),
         .slave(mux_1_channels_0)
     );
     localparam integer mux_1_genblk1_1_j = 1;
-    axi_join mux_1_genblk1_1_joiner (
+    axi_join_ mux_1_genblk1_1_joiner (
         .master(demux_1_channels_1),
         .slave(mux_1_channels_1)
     );
@@ -861,12 +861,12 @@ module axi_crossbar (
         .slave(slave_2)
     );
     localparam integer mux_2_genblk1_0_j = 0;
-    axi_join mux_2_genblk1_0_joiner (
+    axi_join_ mux_2_genblk1_0_joiner (
         .master(demux_0_channels_2),
         .slave(mux_2_channels_0)
     );
     localparam integer mux_2_genblk1_1_j = 1;
-    axi_join mux_2_genblk1_1_joiner (
+    axi_join_ mux_2_genblk1_1_joiner (
         .master(demux_1_channels_2),
         .slave(mux_2_channels_1)
     );
@@ -893,12 +893,12 @@ module axi_crossbar (
         .slave(slave_3)
     );
     localparam integer mux_3_genblk1_0_j = 0;
-    axi_join mux_3_genblk1_0_joiner (
+    axi_join_ mux_3_genblk1_0_joiner (
         .master(demux_0_channels_3),
         .slave(mux_3_channels_0)
     );
     localparam integer mux_3_genblk1_1_j = 1;
-    axi_join mux_3_genblk1_1_joiner (
+    axi_join_ mux_3_genblk1_1_joiner (
         .master(demux_1_channels_3),
         .slave(mux_3_channels_1)
     );
@@ -925,12 +925,12 @@ module axi_crossbar (
         .slave(slave_4)
     );
     localparam integer mux_4_genblk1_0_j = 0;
-    axi_join mux_4_genblk1_0_joiner (
+    axi_join_ mux_4_genblk1_0_joiner (
         .master(demux_0_channels_4),
         .slave(mux_4_channels_0)
     );
     localparam integer mux_4_genblk1_1_j = 1;
-    axi_join mux_4_genblk1_1_joiner (
+    axi_join_ mux_4_genblk1_1_joiner (
         .master(demux_1_channels_4),
         .slave(mux_4_channels_1)
     );
@@ -957,12 +957,12 @@ module axi_crossbar (
         .slave(slave_5)
     );
     localparam integer mux_5_genblk1_0_j = 0;
-    axi_join mux_5_genblk1_0_joiner (
+    axi_join_ mux_5_genblk1_0_joiner (
         .master(demux_0_channels_5),
         .slave(mux_5_channels_0)
     );
     localparam integer mux_5_genblk1_1_j = 1;
-    axi_join mux_5_genblk1_1_joiner (
+    axi_join_ mux_5_genblk1_1_joiner (
         .master(demux_1_channels_5),
         .slave(mux_5_channels_1)
     );
@@ -989,12 +989,12 @@ module axi_crossbar (
         .slave(slave_6)
     );
     localparam integer mux_6_genblk1_0_j = 0;
-    axi_join mux_6_genblk1_0_joiner (
+    axi_join_ mux_6_genblk1_0_joiner (
         .master(demux_0_channels_6),
         .slave(mux_6_channels_0)
     );
     localparam integer mux_6_genblk1_1_j = 1;
-    axi_join mux_6_genblk1_1_joiner (
+    axi_join_ mux_6_genblk1_1_joiner (
         .master(demux_1_channels_6),
         .slave(mux_6_channels_1)
     );
@@ -1021,12 +1021,12 @@ module axi_crossbar (
         .slave(slave_7)
     );
     localparam integer mux_7_genblk1_0_j = 0;
-    axi_join mux_7_genblk1_0_joiner (
+    axi_join_ mux_7_genblk1_0_joiner (
         .master(demux_0_channels_7),
         .slave(mux_7_channels_0)
     );
     localparam integer mux_7_genblk1_1_j = 1;
-    axi_join mux_7_genblk1_1_joiner (
+    axi_join_ mux_7_genblk1_1_joiner (
         .master(demux_1_channels_7),
         .slave(mux_7_channels_1)
     );
@@ -1053,12 +1053,12 @@ module axi_crossbar (
         .slave(slave_8)
     );
     localparam integer mux_8_genblk1_0_j = 0;
-    axi_join mux_8_genblk1_0_joiner (
+    axi_join_ mux_8_genblk1_0_joiner (
         .master(demux_0_channels_8),
         .slave(mux_8_channels_0)
     );
     localparam integer mux_8_genblk1_1_j = 1;
-    axi_join mux_8_genblk1_1_joiner (
+    axi_join_ mux_8_genblk1_1_joiner (
         .master(demux_1_channels_8),
         .slave(mux_8_channels_1)
     );
@@ -1763,7 +1763,7 @@ endmodule
 /* file: ../axi/from_lite.sv */
 /* file: ../axi/id_downsizer.sv */
 /* file: ../axi/join.sv */
-module axi_join (
+module axi_join_ (
     axi_channel_1.slave master,
     axi_channel_1.master slave
 );
