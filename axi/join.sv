@@ -35,13 +35,19 @@ module axi_join (
     // * Widen ID_WIDTH
     // * Widen or narrow ADDR_WIDTH (this would be useful for connecting componenets after demux)
     // * Widen DATA_WIDTH
-    if (master.ID_WIDTH > slave.ID_WIDTH ||
-        master.DATA_WIDTH > slave.DATA_WIDTH ||
-        master.AW_USER_WIDTH != slave.AW_USER_WIDTH ||
-        master.W_USER_WIDTH != slave.W_USER_WIDTH ||
-        master.B_USER_WIDTH != slave.B_USER_WIDTH ||
-        master.AR_USER_WIDTH != slave.AR_USER_WIDTH ||
-        master.R_USER_WIDTH != slave.R_USER_WIDTH)
+    // Static checks of interface matching
+    localparam MADDR_WIDTH = $bits(master.aw_addr);
+    localparam SADDR_WIDTH = $bits(slave.aw_addr);
+   
+    // Static checks of interface matching
+    if (MADDR_WIDTH != SADDR_WIDTH ||
+        $bits(master.aw_id) != $bits(slave[0].aw_id) ||
+        $bits(master.w_data) != $bits(slave[0].w_data) ||
+        $bits(master.aw_user) != $bits(slave[0].aw_user) ||
+        $bits(master.w_user) != $bits(slave[0].w_user) ||
+        $bits(master.b_user) != $bits(slave[0].b_user) ||
+        $bits(master.ar_user) != $bits(slave[0].ar_user) ||
+        $bits(master.r_user) != $bits(slave[0].r_user))
         $fatal(1, "Interface parameters mismatch");
 
     assign slave.aw_id     = master.aw_id;

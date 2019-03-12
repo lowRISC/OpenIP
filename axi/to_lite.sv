@@ -24,7 +24,10 @@
  * DAMAGE.
  */
 
+`ifndef __AXI_COMMON
+`define __AXI_COMMON
 import axi_common::*;
+`endif
 
 // A bridge that connects an AXI master with an AXI-Lite slave. It requires address and data width to match and does
 // not perform width conversion. It will convert bursts into multiple transactions.

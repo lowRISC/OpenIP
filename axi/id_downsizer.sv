@@ -24,7 +24,10 @@
  * DAMAGE.
  */
 
+`ifndef __AXI_COMMON
+`define __AXI_COMMON
 import axi_common::*;
+`endif
 
 // A utility to connect a master to a slave with narrower ID width.
 //

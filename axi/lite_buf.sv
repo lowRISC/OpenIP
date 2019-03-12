@@ -24,7 +24,10 @@
  * DAMAGE.
  */
 
+`ifndef __AXI_COMMON
+`define __AXI_COMMON
 import axi_common::*;
+`endif
 
 // A buffer for AXI-Lite interface.
 module axi_lite_buf #(
@@ -43,7 +46,7 @@ module axi_lite_buf #(
     //
 
     typedef master.ax_pack_t ax_pack_t;
-    fifo #(
+    axififo #(
         .TYPE  (ax_pack_t),
         .DEPTH (DEPTH)
     ) awfifo (
@@ -62,7 +65,7 @@ module axi_lite_buf #(
     //
 
     typedef master.w_pack_t w_pack_t;
-    fifo #(
+    axififo #(
         .TYPE  (w_pack_t),
         .DEPTH (DEPTH)
     ) wfifo (
@@ -80,7 +83,7 @@ module axi_lite_buf #(
     // B channel
     //
 
-    fifo #(
+    axififo #(
         .TYPE  (resp_t),
         .DEPTH (DEPTH)
     ) bfifo (
@@ -98,7 +101,7 @@ module axi_lite_buf #(
     // AR channel
     //
 
-    fifo #(
+    axififo #(
         .TYPE  (ax_pack_t),
         .DEPTH (DEPTH)
     ) arfifo (
@@ -117,7 +120,7 @@ module axi_lite_buf #(
     //
 
     typedef master.r_pack_t r_pack_t;
-    fifo #(
+    axififo #(
         .TYPE  (r_pack_t),
         .DEPTH (DEPTH)
     ) rfifo (

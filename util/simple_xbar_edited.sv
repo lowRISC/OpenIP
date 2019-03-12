@@ -1,4 +1,6 @@
 /* packages */
+`ifndef __GLOBAL_TYPES
+`define __GLOBAL_TYPES
 package global_types;
     typedef enum logic[1:0] {
         enum_0_BURST_FIXED = 2'd0,
@@ -144,7 +146,8 @@ package global_types;
         logic[7:0] active_cnt;
     } struct_15;
 endpackage
-
+`endif //  `ifndef __GLOBAL_TYPES
+   
 /* file: ../../axi/src/axi_pkg.sv */
 /* file: ../../axi/src/axi_intf.sv */
 

@@ -24,7 +24,10 @@
  * DAMAGE.
  */
 
+`ifndef __AXI_COMMON
+`define __AXI_COMMON
 import axi_common::*;
+`endif
 
 // Interface that defines an AXI-Lite channel.
 //

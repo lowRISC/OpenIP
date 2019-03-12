@@ -39,21 +39,37 @@ module axi_regslice #(
 );
 
     // Static checks of interface matching
-    if (master.ID_WIDTH != slave.ID_WIDTH ||
-        master.ADDR_WIDTH != slave.ADDR_WIDTH ||
-        master.DATA_WIDTH != slave.DATA_WIDTH ||
-        master.AW_USER_WIDTH != slave.AW_USER_WIDTH ||
-        master.W_USER_WIDTH != slave.W_USER_WIDTH ||
-        master.B_USER_WIDTH != slave.B_USER_WIDTH ||
-        master.AR_USER_WIDTH != slave.AR_USER_WIDTH ||
-        master.R_USER_WIDTH != slave.R_USER_WIDTH)
+    localparam MADDR_WIDTH = $bits(master.aw_addr);
+    localparam SADDR_WIDTH = $bits(slave.aw_addr);
+   
+    // Static checks of interface matching
+    if (MADDR_WIDTH != SADDR_WIDTH ||
+        $bits(master.aw_id) != $bits(slave.aw_id) ||
+        $bits(master.w_data) != $bits(slave.w_data) ||
+        $bits(master.aw_user) != $bits(slave.aw_user) ||
+        $bits(master.w_user) != $bits(slave.w_user) ||
+        $bits(master.b_user) != $bits(slave.b_user) ||
+        $bits(master.ar_user) != $bits(slave.ar_user) ||
+        $bits(master.r_user) != $bits(slave.r_user))
         $fatal(1, "Parameter mismatch");
 
     //
     // AW channel
     //
 
-    typedef master.aw_pack_t aw_pack_t;
+    typedef logic [
+        ($bits(master.aw_id) > $bits(slave.aw_id) ? $bits(master.aw_id) : $bits(slave.aw_id)) +
+        $bits(master.aw_addr) +
+        $bits(master.aw_len) +
+        $bits(master.aw_size) +
+        $bits(master.aw_burst) +
+        $bits(master.aw_lock) +
+        $bits(master.aw_cache) +
+        $bits(master.aw_prot) +
+        $bits(master.aw_qos) +
+        $bits(master.aw_region) +
+        $bits(master.aw_user) : 0] aw_pack_t;
+
     regslice #(
         .TYPE             (aw_pack_t),
         .FORWARD          ((AW_MODE & 1) != 0),
@@ -64,7 +80,7 @@ module axi_regslice #(
         .rstn    (master.rstn),
         .w_valid (master.aw_valid),
         .w_ready (master.aw_ready),
-        .w_data  (aw_pack_t'{
+        .w_data  ({
             master.aw_id, master.aw_addr, master.aw_len, master.aw_size, master.aw_burst, master.aw_lock,
             master.aw_cache, master.aw_prot, master.aw_qos, master.aw_region, master.aw_user
         }),
@@ -80,7 +96,12 @@ module axi_regslice #(
     // W channel
     //
 
-    typedef master.w_pack_t w_pack_t;
+    typedef logic [
+        $bits(master.w_data) +
+        $bits(master.w_strb) +
+        $bits(master.w_last) +
+        $bits(master.w_user) : 1] w_pack_t;
+
     regslice #(
         .TYPE             (w_pack_t),
         .FORWARD          ((W_MODE & 1) != 0),
@@ -91,7 +112,7 @@ module axi_regslice #(
         .rstn    (master.rstn),
         .w_valid (master.w_valid),
         .w_ready (master.w_ready),
-        .w_data  (w_pack_t'{master.w_data, master.w_strb, master.w_last, master.w_user}),
+        .w_data  ({master.w_data, master.w_strb, master.w_last, master.w_user}),
         .r_valid (slave.w_valid),
         .r_ready (slave.w_ready),
         .r_data  ({slave.w_data, slave.w_strb, slave.w_last, slave.w_user})
@@ -101,7 +122,11 @@ module axi_regslice #(
     // B channel
     //
 
-    typedef master.b_pack_t b_pack_t;
+    typedef logic [
+        ($bits(master.b_id) > $bits(slave.b_id) ? $bits(master.b_id) : $bits(slave.b_id)) +
+        $bits(slave.b_resp) +
+        $bits(slave.b_user) : 1] b_pack_t;
+
     regslice #(
         .TYPE             (b_pack_t),
         .FORWARD          ((B_MODE & 1) != 0),
@@ -112,7 +137,7 @@ module axi_regslice #(
         .rstn    (master.rstn),
         .w_valid (slave.b_valid),
         .w_ready (slave.b_ready),
-        .w_data  (b_pack_t'{slave.b_id, slave.b_resp, slave.b_user}),
+        .w_data  ({slave.b_id, slave.b_resp, slave.b_user}),
         .r_valid (master.b_valid),
         .r_ready (master.b_ready),
         .r_data  ({master.b_id, master.b_resp, master.b_user})
@@ -122,7 +147,19 @@ module axi_regslice #(
     // AR channel
     //
 
-    typedef master.ar_pack_t ar_pack_t;
+    typedef logic [
+        ($bits(master.ar_id) > $bits(slave.ar_id) ? $bits(master.ar_id) : $bits(slave.ar_id)) +
+        $bits(master.ar_addr) +
+        $bits(master.ar_len) +
+        $bits(master.ar_size) +
+        $bits(master.ar_burst) +
+        $bits(master.ar_lock) +
+        $bits(master.ar_cache) +
+        $bits(master.ar_prot) +
+        $bits(master.ar_qos) +
+        $bits(master.ar_region) +
+        $bits(master.ar_user) : 0] ar_pack_t;
+
     regslice #(
         .TYPE             (ar_pack_t),
         .FORWARD          ((AR_MODE & 1) != 0),
@@ -133,7 +170,7 @@ module axi_regslice #(
         .rstn    (master.rstn),
         .w_valid (master.ar_valid),
         .w_ready (master.ar_ready),
-        .w_data  (ar_pack_t'{
+        .w_data  ({
             master.ar_id, master.ar_addr, master.ar_len, master.ar_size, master.ar_burst, master.ar_lock,
             master.ar_cache, master.ar_prot, master.ar_qos, master.ar_region, master.ar_user
         }),
@@ -149,7 +186,13 @@ module axi_regslice #(
     // R channel
     //
 
-    typedef master.r_pack_t r_pack_t;
+    typedef logic [
+        ($bits(master.r_id) > $bits(slave.r_id) ? $bits(master.r_id) : $bits(slave.r_id)) +
+        $bits(slave.r_data) +
+        $bits(slave.r_resp) +
+        $bits(slave.r_last) +
+        $bits(slave.r_user) : 0] r_pack_t;
+
     regslice #(
         .TYPE             (r_pack_t),
         .FORWARD          ((R_MODE & 1) != 0),
@@ -160,7 +203,7 @@ module axi_regslice #(
         .rstn    (master.rstn),
         .w_valid (slave.r_valid),
         .w_ready (slave.r_ready),
-        .w_data  (r_pack_t'{slave.r_id, slave.r_data, slave.r_resp, slave.r_last, slave.r_user}),
+        .w_data  ({slave.r_id, slave.r_data, slave.r_resp, slave.r_last, slave.r_user}),
         .r_valid (master.r_valid),
         .r_ready (master.r_ready),
         .r_data  ({master.r_id, master.r_data, master.r_resp, master.r_last, master.r_user})

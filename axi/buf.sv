@@ -48,7 +48,7 @@ module axi_buf #(
     //
 
     typedef master.aw_pack_t aw_pack_t;
-    fifo #(
+    axififo #(
         .TYPE  (aw_pack_t),
         .DEPTH (DEPTH)
     ) awfifo (
@@ -73,7 +73,7 @@ module axi_buf #(
     //
 
     typedef master.w_pack_t w_pack_t;
-    fifo #(
+    axififo #(
         .TYPE  (w_pack_t),
         .DEPTH (DEPTH)
     ) wfifo (
@@ -92,7 +92,7 @@ module axi_buf #(
     //
 
     typedef master.b_pack_t b_pack_t;
-    fifo #(
+    axififo #(
         .TYPE  (b_pack_t),
         .DEPTH (DEPTH)
     ) bfifo (
@@ -111,7 +111,7 @@ module axi_buf #(
     //
 
     typedef master.ar_pack_t ar_pack_t;
-    fifo #(
+    axififo #(
         .TYPE  (ar_pack_t),
         .DEPTH (DEPTH)
     ) arfifo (
@@ -136,7 +136,7 @@ module axi_buf #(
     //
 
     typedef master.r_pack_t r_pack_t;
-    fifo #(
+    axififo #(
         .TYPE  (r_pack_t),
         .DEPTH (DEPTH)
     ) rfifo (

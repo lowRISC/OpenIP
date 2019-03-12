@@ -24,7 +24,10 @@
  * DAMAGE.
  */
 
+`ifndef __AXI_COMMON
+`define __AXI_COMMON
 import axi_common::*;
+`endif
 
 // A crossbar for connecting multiple masters with multiple single slaves.
 //
@@ -46,10 +49,13 @@ module axi_crossbar #(
 );
 
     for (genvar i = 0; i < MASTER_NUM; i++) begin: demux
+       localparam MID_WIDTH = $bits(master[i].aw_id);
+       localparam MDATA_WIDTH = $bits(master[i].w_data);
+
         axi_channel #(
-            .ID_WIDTH   (master[i].ID_WIDTH),
+            .ID_WIDTH   (MID_WIDTH),
             .ADDR_WIDTH (ADDR_WIDTH),
-            .DATA_WIDTH (master[i].DATA_WIDTH)
+            .DATA_WIDTH (MDATA_WIDTH)
         ) master_buf (
             master[i].clk, master[i].rstn
         ), channels[SLAVE_NUM] (
@@ -71,18 +77,21 @@ module axi_crossbar #(
     end
 
     for (genvar i = 0; i < SLAVE_NUM; i++) begin: mux
+       localparam MID_WIDTH = $bits(master[0].aw_id);
+       localparam SID_WIDTH = $bits(slave[i].aw_id);
+       localparam SDATA_WIDTH = $bits(slave[i].w_data);
         axi_channel #(
-            .ID_WIDTH   (master[0].ID_WIDTH),
+            .ID_WIDTH   (MID_WIDTH),
             .ADDR_WIDTH (ADDR_WIDTH),
-            .DATA_WIDTH (slave[i].DATA_WIDTH)
+            .DATA_WIDTH (SDATA_WIDTH)
         ) channels[MASTER_NUM] (
             .clk(slave[i].clk), .rstn(slave[i].rstn)
         );
 
         axi_channel #(
-            .ID_WIDTH   (slave[i].ID_WIDTH),
+            .ID_WIDTH   (SID_WIDTH),
             .ADDR_WIDTH (ADDR_WIDTH),
-            .DATA_WIDTH (slave[i].DATA_WIDTH)
+            .DATA_WIDTH (SDATA_WIDTH)
         ) slave_buf(
             .clk(slave[i].clk), .rstn(slave[i].rstn)
         );

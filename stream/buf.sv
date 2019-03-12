@@ -40,10 +40,10 @@ module stream_buf #(
         $fatal(1, "Parameter mismatch");
 
     typedef master.pack_t pack_t;
-    fifo #(
+    axififo #(
         .TYPE  (pack_t),
         .DEPTH (DEPTH)
-    ) fifo (
+    ) fifo_0 (
         .clk     (master.clk),
         .rstn    (master.rstn),
         .w_valid (master.t_valid),

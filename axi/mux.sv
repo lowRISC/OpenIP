@@ -24,7 +24,10 @@
  * DAMAGE.
  */
 
+`ifndef __AXI_COMMON
+`define __AXI_COMMON
 import axi_common::*;
+`endif
 
 // A multiplexer that connects multiple masters with a single slave.
 //
@@ -46,9 +49,11 @@ module axi_mux_raw #(
 );
 
     localparam MASTER_WIDTH = $clog2(MASTER_NUM);
-
+    localparam MID_WIDTH = $bits(master[0].aw_id);
+    localparam SID_WIDTH = $bits(slave.aw_id);
+   
     // Overall static check. As we don't perform ID translation in this mux, we impose a requirement on ID widths.
-    if (master[0].ID_WIDTH + MASTER_WIDTH != slave.ID_WIDTH)
+    if (MID_WIDTH + MASTER_WIDTH != SID_WIDTH)
         $fatal(
             1, "slave.ID_WIDTH (%d) must be equal to master.ID_WIDTH (%d) + MASTER_WIDTH (%d)",
             slave.ID_WIDTH, master[0].ID_WIDTH, MASTER_WIDTH
@@ -74,9 +79,41 @@ module axi_mux_raw #(
     // Rearrange wires that need to be multiplexed to be packed.
     //
 
-    typedef slave.aw_pack_t aw_pack_t;
-    typedef slave. w_pack_t  w_pack_t;
-    typedef slave.ar_pack_t ar_pack_t;
+    typedef struct packed {
+        logic [$bits(master[0].aw_id)+MASTER_WIDTH:1]      id;
+        logic [$bits(master[0].aw_addr):1]    addr;
+        logic [7:0]               len;
+        logic [2:0]               size;
+        burst_t                   burst;
+        logic                     lock;
+        cache_t                   cache;
+        prot_t                    prot;
+        logic [3:0]               qos;
+        logic [3:0]               region;
+        logic [$bits(master[0].aw_user):1] user;
+    } aw_pack_t;
+
+    typedef struct packed {
+        logic [$bits(master[0].w_data):1]    data;
+        logic [$bits(master[0].w_strb):1]    strb;
+        logic                     last;
+        logic [$bits(master[0].w_user):1]  user;
+    } w_pack_t;
+
+    typedef struct packed {
+        logic [$bits(master[0].ar_id)+MASTER_WIDTH:1]      id;
+        logic [$bits(master[0].ar_addr):1]    addr;
+        logic [7:0]               len;
+        logic [2:0]               size;
+        burst_t                   burst;
+        logic                     lock;
+        cache_t                   cache;
+        prot_t                    prot;
+        logic [3:0]               qos;
+        logic [3:0]               region;
+        logic [$bits(master[0].ar_user):1] user;
+    } ar_pack_t;
+
     aw_pack_t [MASTER_NUM-1:0] master_aw;
     logic     [MASTER_NUM-1:0] master_aw_valid;
     w_pack_t  [MASTER_NUM-1:0] master_w;

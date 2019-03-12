@@ -144,6 +144,7 @@ assign m_axi_aruser = s_axi_aruser;
 assign m_axi_arvalid = s_axi_arvalid;
 assign m_axi_rready = s_axi_rready;
 
+`ifdef XILINX_ILA   
 wire trig_out_axi, trig_out_ack_axi, trig_in_axi, trig_in_ack_axi;
 
 xlnx_ila_axi_0 ila_axi (
@@ -260,5 +261,6 @@ xlnx_proto_check proto1 (
   .pc_axi_rvalid(s_axi_rvalid),      // input wire pc_axi_rvalid
   .pc_axi_rready(s_axi_rready)       // input wire pc_axi_rready
 );
+`endif
    
 endmodule

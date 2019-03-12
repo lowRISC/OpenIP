@@ -24,7 +24,10 @@
  * DAMAGE.
  */
 
+`ifndef __AXI_COMMON
+`define __AXI_COMMON
 import axi_common::*;
+`endif
 
 // A demultiplexer that connects a single master with multiple slaves.
 //
@@ -49,17 +52,18 @@ module axi_demux_raw #(
 );
 
     localparam SLAVE_WIDTH = $clog2(SLAVE_NUM);
-
+    localparam MADDR_WIDTH = $bits(master.aw_addr);
+   
     // Static checks of interface matching
-    if (master.ADDR_WIDTH != ADDR_WIDTH ||
-        master.ID_WIDTH != slave[0].ID_WIDTH ||
-        master.DATA_WIDTH != slave[0].DATA_WIDTH ||
-        master.ADDR_WIDTH != slave[0].ADDR_WIDTH ||
-        master.AW_USER_WIDTH != slave[0].AW_USER_WIDTH ||
-        master.W_USER_WIDTH != slave[0].W_USER_WIDTH ||
-        master.B_USER_WIDTH != slave[0].B_USER_WIDTH ||
-        master.AR_USER_WIDTH != slave[0].AR_USER_WIDTH ||
-        master.R_USER_WIDTH != slave[0].R_USER_WIDTH)
+    if (MADDR_WIDTH != ADDR_WIDTH ||
+        $bits(master.aw_id) != $bits(slave[0].aw_id) ||
+        $bits(master.w_data) != $bits(slave[0].w_data) ||
+        ADDR_WIDTH != $bits(slave[0].aw_addr) ||
+        $bits(master.aw_user) != $bits(slave[0].aw_user) ||
+        $bits(master.w_user) != $bits(slave[0].w_user) ||
+        $bits(master.b_user) != $bits(slave[0].b_user) ||
+        $bits(master.ar_user) != $bits(slave[0].ar_user) ||
+        $bits(master.r_user) != $bits(slave[0].r_user))
         $fatal(1, "Parameter mismatch");
 
     // Extract clk and rstn signals from interfaces
@@ -72,8 +76,20 @@ module axi_demux_raw #(
     // Rearrange wires that need to be multiplexed to be packed.
     //
 
-    typedef master.b_pack_t b_pack_t;
-    typedef master.r_pack_t r_pack_t;
+    typedef struct packed {
+        logic [$bits(slave[0].b_id):1]     id;
+        resp_t                    resp;
+        logic [$bits(slave[0].b_user):1]  user;
+    } b_pack_t;
+
+    typedef struct packed {
+        logic [$bits(slave[0].r_id):1]     id;
+        logic [$bits(slave[0].r_data):1]   data;
+        resp_t                   resp;
+        logic                    last;
+        logic [$bits(slave[0].r_user):1] user;
+    } r_pack_t;
+
     logic     [SLAVE_NUM-1:0] slave_aw_ready;
     logic     [SLAVE_NUM-1:0] slave_w_ready;
     b_pack_t  [SLAVE_NUM-1:0] slave_b;
@@ -433,9 +449,9 @@ module axi_demux #(
 );
 
     axi_channel #(
-        .ID_WIDTH   (master.ID_WIDTH),
-        .ADDR_WIDTH (master.ADDR_WIDTH),
-        .DATA_WIDTH (master.DATA_WIDTH)
+        .ID_WIDTH   ($bits(master.aw_id)),
+        .ADDR_WIDTH ($bits(master.aw_addr)),
+        .DATA_WIDTH ($bits(master.w_data))
     ) master_buf (
         master.clk,
         master.rstn
