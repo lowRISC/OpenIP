@@ -70,6 +70,16 @@ module axi_regslice #(
         $bits(master.aw_region) +
         $bits(master.aw_user) : 0] aw_pack_t;
 
+    aw_pack_t aw_wdata, aw_rdata;
+   assign aw_wdata = {
+            master.aw_id, master.aw_addr, master.aw_len, master.aw_size, master.aw_burst, master.aw_lock,
+            master.aw_cache, master.aw_prot, master.aw_qos, master.aw_region, master.aw_user
+                      };
+   assign {
+            slave.aw_id, slave.aw_addr, slave.aw_len, slave.aw_size, slave.aw_burst, slave.aw_lock,
+            slave.aw_cache, slave.aw_prot, slave.aw_qos, slave.aw_region, slave.aw_user
+           } = aw_rdata;
+   
     regslice #(
         .TYPE             (aw_pack_t),
         .FORWARD          ((AW_MODE & 1) != 0),
@@ -80,16 +90,10 @@ module axi_regslice #(
         .rstn    (master.rstn),
         .w_valid (master.aw_valid),
         .w_ready (master.aw_ready),
-        .w_data  ({
-            master.aw_id, master.aw_addr, master.aw_len, master.aw_size, master.aw_burst, master.aw_lock,
-            master.aw_cache, master.aw_prot, master.aw_qos, master.aw_region, master.aw_user
-        }),
+        .w_data  (aw_wdata),
         .r_valid (slave.aw_valid),
         .r_ready (slave.aw_ready),
-        .r_data  ({
-            slave.aw_id, slave.aw_addr, slave.aw_len, slave.aw_size, slave.aw_burst, slave.aw_lock,
-            slave.aw_cache, slave.aw_prot, slave.aw_qos, slave.aw_region, slave.aw_user
-        })
+        .r_data  (aw_rdata)
     );
 
     //
@@ -102,6 +106,10 @@ module axi_regslice #(
         $bits(master.w_last) +
         $bits(master.w_user) : 1] w_pack_t;
 
+   w_pack_t w_wdata, w_rdata;
+   assign w_wdata = {master.w_data, master.w_strb, master.w_last, master.w_user};
+   assign {slave.w_data, slave.w_strb, slave.w_last, slave.w_user} = w_rdata;
+   
     regslice #(
         .TYPE             (w_pack_t),
         .FORWARD          ((W_MODE & 1) != 0),
@@ -112,10 +120,10 @@ module axi_regslice #(
         .rstn    (master.rstn),
         .w_valid (master.w_valid),
         .w_ready (master.w_ready),
-        .w_data  ({master.w_data, master.w_strb, master.w_last, master.w_user}),
+        .w_data  (w_wdata),
         .r_valid (slave.w_valid),
         .r_ready (slave.w_ready),
-        .r_data  ({slave.w_data, slave.w_strb, slave.w_last, slave.w_user})
+        .r_data  (w_rdata)
     );
 
     //
@@ -127,6 +135,10 @@ module axi_regslice #(
         $bits(slave.b_resp) +
         $bits(slave.b_user) : 1] b_pack_t;
 
+   b_pack_t b_wdata, b_rdata;
+   assign b_wdata = {slave.b_id, slave.b_resp, slave.b_user};
+   assign {master.b_id, master.b_resp, master.b_user} = b_rdata;
+   
     regslice #(
         .TYPE             (b_pack_t),
         .FORWARD          ((B_MODE & 1) != 0),
@@ -137,10 +149,10 @@ module axi_regslice #(
         .rstn    (master.rstn),
         .w_valid (slave.b_valid),
         .w_ready (slave.b_ready),
-        .w_data  ({slave.b_id, slave.b_resp, slave.b_user}),
+        .w_data  (b_wdata),
         .r_valid (master.b_valid),
         .r_ready (master.b_ready),
-        .r_data  ({master.b_id, master.b_resp, master.b_user})
+        .r_data  (b_rdata)
     );
 
     //
@@ -160,6 +172,16 @@ module axi_regslice #(
         $bits(master.ar_region) +
         $bits(master.ar_user) : 0] ar_pack_t;
 
+    ar_pack_t ar_wdata, ar_rdata;
+   assign ar_wdata = {
+            master.ar_id, master.ar_addr, master.ar_len, master.ar_size, master.ar_burst, master.ar_lock,
+            master.ar_cache, master.ar_prot, master.ar_qos, master.ar_region, master.ar_user
+                       };
+   assign {
+            slave.ar_id, slave.ar_addr, slave.ar_len, slave.ar_size, slave.ar_burst, slave.ar_lock,
+            slave.ar_cache, slave.ar_prot, slave.ar_qos, slave.ar_region, slave.ar_user
+           } = ar_rdata;
+   
     regslice #(
         .TYPE             (ar_pack_t),
         .FORWARD          ((AR_MODE & 1) != 0),
@@ -170,16 +192,10 @@ module axi_regslice #(
         .rstn    (master.rstn),
         .w_valid (master.ar_valid),
         .w_ready (master.ar_ready),
-        .w_data  ({
-            master.ar_id, master.ar_addr, master.ar_len, master.ar_size, master.ar_burst, master.ar_lock,
-            master.ar_cache, master.ar_prot, master.ar_qos, master.ar_region, master.ar_user
-        }),
+        .w_data  (ar_wdata),
         .r_valid (slave.ar_valid),
         .r_ready (slave.ar_ready),
-        .r_data  ({
-            slave.ar_id, slave.ar_addr, slave.ar_len, slave.ar_size, slave.ar_burst, slave.ar_lock,
-            slave.ar_cache, slave.ar_prot, slave.ar_qos, slave.ar_region, slave.ar_user
-        })
+        .r_data  (ar_rdata)
     );
 
     //
@@ -193,6 +209,10 @@ module axi_regslice #(
         $bits(slave.r_last) +
         $bits(slave.r_user) : 0] r_pack_t;
 
+    r_pack_t r_wdata, r_rdata;
+    assign r_wdata = {slave.r_id, slave.r_data, slave.r_resp, slave.r_last, slave.r_user};
+    assign {master.r_id, master.r_data, master.r_resp, master.r_last, master.r_user} = r_rdata;
+   
     regslice #(
         .TYPE             (r_pack_t),
         .FORWARD          ((R_MODE & 1) != 0),
@@ -203,10 +223,10 @@ module axi_regslice #(
         .rstn    (master.rstn),
         .w_valid (slave.r_valid),
         .w_ready (slave.r_ready),
-        .w_data  ({slave.r_id, slave.r_data, slave.r_resp, slave.r_last, slave.r_user}),
+        .w_data  (r_wdata),
         .r_valid (master.r_valid),
         .r_ready (master.r_ready),
-        .r_data  ({master.r_id, master.r_data, master.r_resp, master.r_last, master.r_user})
+        .r_data  (r_rdata)
     );
 
 endmodule
