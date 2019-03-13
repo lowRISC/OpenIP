@@ -68,7 +68,7 @@ module axi_regslice #(
         $bits(master.aw_prot) +
         $bits(master.aw_qos) +
         $bits(master.aw_region) +
-        $bits(master.aw_user) : 0] aw_pack_t;
+        $bits(master.aw_user) : 1] aw_pack_t;
 
     regslice #(
         .TYPE             (aw_pack_t),
@@ -158,7 +158,7 @@ module axi_regslice #(
         $bits(master.ar_prot) +
         $bits(master.ar_qos) +
         $bits(master.ar_region) +
-        $bits(master.ar_user) : 0] ar_pack_t;
+        $bits(master.ar_user) : 1] ar_pack_t;
 
     regslice #(
         .TYPE             (ar_pack_t),
@@ -191,7 +191,7 @@ module axi_regslice #(
         $bits(slave.r_data) +
         $bits(slave.r_resp) +
         $bits(slave.r_last) +
-        $bits(slave.r_user) : 0] r_pack_t;
+        $bits(slave.r_user) : 1] r_pack_t;
 
     regslice #(
         .TYPE             (r_pack_t),
