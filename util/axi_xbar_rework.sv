@@ -25,9 +25,7 @@ module axi_xbar_rework #(
     parameter AXI_ADDR_WIDTH,
     parameter AXI_DATA_WIDTH,
     parameter AXI_ID_WIDTH,
-    parameter AXI_USER_WIDTH,
-    parameter MASTER_SLICE_DEPTH = 1,
-    parameter SLAVE_SLICE_DEPTH  = 1
+    parameter AXI_USER_WIDTH
 )(
     input logic      clk,
     input logic      rst_n,
@@ -87,8 +85,8 @@ module axi_xbar_rework #(
           .outgoing_if(master[i]),
           .incoming_openip(master_buf[i])                       
           );
-      assign mask_addr[i] = end_addr_i[i] - start_addr_i[i];
-      assign start_addr[i] = start_addr_i[i];
+      assign mask_addr[NB_MASTER-1-i] = end_addr_i[i] - start_addr_i[i];
+      assign start_addr[NB_MASTER-1-i] = start_addr_i[i];
       end
 
 axi_crossbar #(

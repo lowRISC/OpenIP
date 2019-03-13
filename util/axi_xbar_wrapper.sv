@@ -42,14 +42,14 @@ module axi_xbar_wrapper #(
       .AXI_DATA_WIDTH ( AXI_DATA_WIDTH  ),
       .AXI_ID_WIDTH   ( AXI_ID_WIDTH    ),
       .AXI_USER_WIDTH ( AXI_USER_WIDTH  )
-    ) axi_slave [NB_SLAVE-1:0](.clk_i(clk));
+    ) axi_slave [NB_SLAVE-1:0]();
 
     AXI_BUS #(
        .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH ),
        .AXI_DATA_WIDTH ( AXI_DATA_WIDTH ),
        .AXI_ID_WIDTH   ( AXI_ID_OUT     ),
        .AXI_USER_WIDTH ( AXI_USER_WIDTH )
-    ) axi_master [NB_MASTER-1:0](.clk_i(clk));
+    ) axi_master [NB_MASTER-1:0]();
 
     axi_xbar_rework #(
         .NB_MASTER      ( NB_MASTER      ),

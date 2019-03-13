@@ -41,13 +41,18 @@ module axi_id_downsizer_raw #(
 );
 
     // Static checks of interface matching
-    if (master.DATA_WIDTH != slave.DATA_WIDTH ||
-        master.ADDR_WIDTH != slave.ADDR_WIDTH ||
-        master.AW_USER_WIDTH != slave.AW_USER_WIDTH ||
-        master.W_USER_WIDTH != slave.W_USER_WIDTH ||
-        master.B_USER_WIDTH != slave.B_USER_WIDTH ||
-        master.AR_USER_WIDTH != slave.AR_USER_WIDTH ||
-        master.R_USER_WIDTH != slave.R_USER_WIDTH)
+    localparam MADDR_WIDTH = $bits(master.aw_addr);
+    localparam SADDR_WIDTH = $bits(slave.aw_addr);
+   
+    // Static checks of interface matching
+    if (MADDR_WIDTH != SADDR_WIDTH ||
+        $bits(master.aw_id) != $bits(slave.aw_id) ||
+        $bits(master.w_data) != $bits(slave.w_data) ||
+        $bits(master.aw_user) != $bits(slave.aw_user) ||
+        $bits(master.w_user) != $bits(slave.w_user) ||
+        $bits(master.b_user) != $bits(slave.b_user) ||
+        $bits(master.ar_user) != $bits(slave.ar_user) ||
+        $bits(master.r_user) != $bits(slave.r_user))
         $fatal(1, "Parameter mismatch");
 
     // Extract clk and rstn signals from interfaces
@@ -251,18 +256,18 @@ module axi_id_downsizer #(
 );
 
     axi_channel #(
-        .ID_WIDTH   (master.ID_WIDTH),
-        .ADDR_WIDTH (master.ADDR_WIDTH),
-        .DATA_WIDTH (master.DATA_WIDTH)
+        .ID_WIDTH   ($bits(master.aw_id)),
+        .ADDR_WIDTH ($bits(master.aw_addr)),
+        .DATA_WIDTH ($bits(master.w_data))
     ) master_buf (
         master.clk,
         master.rstn
     );
 
     axi_channel #(
-        .ID_WIDTH   (slave.ID_WIDTH),
-        .ADDR_WIDTH (slave.ADDR_WIDTH),
-        .DATA_WIDTH (slave.DATA_WIDTH)
+        .ID_WIDTH   ($bits(slave.aw_id)),
+        .ADDR_WIDTH ($bits(slave.aw_addr)),
+        .DATA_WIDTH ($bits(slave.w_data))
     ) slave_buf (
         slave.clk,
         slave.rstn
