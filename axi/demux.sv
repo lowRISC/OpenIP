@@ -77,17 +77,17 @@ module axi_demux_raw #(
     //
 
     typedef struct packed {
-        logic [$bits(slave[0].b_id):1]     id;
+        logic [$bits(master.b_id)-1:0]     id;
         resp_t                    resp;
-        logic [$bits(slave[0].b_user):1]  user;
+        logic [$bits(master.b_user)-1:0]  user;
     } b_pack_t;
 
     typedef struct packed {
-        logic [$bits(slave[0].r_id):1]     id;
-        logic [$bits(slave[0].r_data):1]   data;
+        logic [$bits(master.r_id)-1:0]     id;
+        logic [$bits(master.r_data)-1:0]   data;
         resp_t                   resp;
         logic                    last;
-        logic [$bits(slave[0].r_user):1] user;
+        logic [$bits(master.r_user)-1:0] user;
     } r_pack_t;
 
     logic     [SLAVE_NUM-1:0] slave_aw_ready;

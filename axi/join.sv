@@ -30,24 +30,37 @@ module axi_join (
     axi_channel.master slave
 );
 
+localparam SZ_master_ar_user = $bits(master.ar_user);
+localparam SZ_master_aw_addr = $bits(master.aw_addr);
+localparam SZ_master_aw_id = $bits(master.aw_id);
+localparam SZ_master_aw_user = $bits(master.aw_user);
+localparam SZ_master_b_user = $bits(master.b_user);
+localparam SZ_master_r_user = $bits(master.r_user);
+localparam SZ_master_w_data = $bits(master.w_data);
+localparam SZ_master_w_user = $bits(master.w_user);
+localparam SZ_slave_ar_user = $bits(slave.ar_user);
+localparam SZ_slave_aw_addr = $bits(slave.aw_addr);
+localparam SZ_slave_aw_id = $bits(slave.aw_id);
+localparam SZ_slave_aw_user = $bits(slave.aw_user);
+localparam SZ_slave_b_user = $bits(slave.b_user);
+localparam SZ_slave_r_user = $bits(slave.r_user);
+localparam SZ_slave_w_data = $bits(slave.w_data);
+localparam SZ_slave_w_user = $bits(slave.w_user);
+
     // Static checks of interface matching.
     // Normally parameters should match exactly, but the following operations are legal:
     // * Widen ID_WIDTH
     // * Widen or narrow ADDR_WIDTH (this would be useful for connecting componenets after demux)
     // * Widen DATA_WIDTH
     // Static checks of interface matching
-    localparam MADDR_WIDTH = $bits(master.aw_addr);
-    localparam SADDR_WIDTH = $bits(slave.aw_addr);
-   
-    // Static checks of interface matching
-    if (MADDR_WIDTH != SADDR_WIDTH ||
-        $bits(master.aw_id) != $bits(slave[0].aw_id) ||
-        $bits(master.w_data) != $bits(slave[0].w_data) ||
-        $bits(master.aw_user) != $bits(slave[0].aw_user) ||
-        $bits(master.w_user) != $bits(slave[0].w_user) ||
-        $bits(master.b_user) != $bits(slave[0].b_user) ||
-        $bits(master.ar_user) != $bits(slave[0].ar_user) ||
-        $bits(master.r_user) != $bits(slave[0].r_user))
+    if (SZ_master_aw_addr != SZ_slave_aw_addr ||
+        SZ_master_aw_id != SZ_slave_aw_id ||
+        SZ_master_w_data != SZ_slave_w_data ||
+        SZ_master_aw_user != SZ_slave_aw_user ||
+        SZ_master_w_user != SZ_slave_w_user ||
+        SZ_master_b_user != SZ_slave_b_user ||
+        SZ_master_ar_user != SZ_slave_ar_user ||
+        SZ_master_r_user != SZ_slave_r_user)
         $fatal(1, "Interface parameters mismatch");
 
     assign slave.aw_id     = master.aw_id;

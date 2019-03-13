@@ -74,12 +74,12 @@ localparam SZ_slave_aw_addr = $bits(slave.aw_addr);
 localparam SZ_slave_aw_id = $bits(slave.aw_id);
 localparam SZ_slave_aw_user = $bits(slave.aw_user);
 localparam SZ_slave_b_id = $bits(slave.b_id);
-localparam SZ_slave_b_resp = $bits(slave.b_resp);
+localparam SZ_master_b_resp = $bits(master.b_resp);
 localparam SZ_slave_b_user = $bits(slave.b_user);
-localparam SZ_slave_r_data = $bits(slave.r_data);
+localparam SZ_master_r_data = $bits(master.r_data);
 localparam SZ_slave_r_id = $bits(slave.r_id);
-localparam SZ_slave_r_last = $bits(slave.r_last);
-localparam SZ_slave_r_resp = $bits(slave.r_resp);
+localparam SZ_master_r_last = $bits(master.r_last);
+localparam SZ_master_r_resp = $bits(master.r_resp);
 localparam SZ_slave_r_user = $bits(slave.r_user);
 localparam SZ_slave_w_data = $bits(slave.w_data);
 localparam SZ_slave_w_user = $bits(slave.w_user);
@@ -110,7 +110,7 @@ localparam SZ_slave_w_user = $bits(slave.w_user);
         SZ_master_aw_prot +
         SZ_master_aw_qos +
         SZ_master_aw_region +
-        SZ_master_aw_user : 1] aw_pack_t;
+        SZ_master_aw_user - 1 : 0] aw_pack_t;
 
     regslice #(
         .TYPE             (aw_pack_t),
@@ -142,7 +142,7 @@ localparam SZ_slave_w_user = $bits(slave.w_user);
         SZ_master_w_data +
         SZ_master_w_strb +
         SZ_master_w_last +
-        SZ_master_w_user : 1] w_pack_t;
+        SZ_master_w_user - 1 : 0] w_pack_t;
 
     regslice #(
         .TYPE             (w_pack_t),
@@ -165,9 +165,9 @@ localparam SZ_slave_w_user = $bits(slave.w_user);
     //
 
     typedef logic [
-        SZ_slave_b_id +
-        SZ_slave_b_resp +
-        SZ_slave_b_user : 1] b_pack_t;
+        SZ_master_b_id +
+        SZ_master_b_resp +
+        SZ_master_b_user - 1 : 0] b_pack_t;
 
     regslice #(
         .TYPE             (b_pack_t),
@@ -200,7 +200,7 @@ localparam SZ_slave_w_user = $bits(slave.w_user);
         SZ_master_ar_prot +
         SZ_master_ar_qos +
         SZ_master_ar_region +
-        SZ_master_ar_user : 1] ar_pack_t;
+        SZ_master_ar_user - 1 : 0] ar_pack_t;
 
     regslice #(
         .TYPE             (ar_pack_t),
@@ -229,11 +229,11 @@ localparam SZ_slave_w_user = $bits(slave.w_user);
     //
 
     typedef logic [
-        SZ_slave_r_id +
-        SZ_slave_r_data +
-        SZ_slave_r_resp +
-        SZ_slave_r_last +
-        SZ_slave_r_user : 1] r_pack_t;
+        SZ_master_r_id +
+        SZ_master_r_data +
+        SZ_master_r_resp +
+        SZ_master_r_last +
+        SZ_master_r_user - 1 : 0] r_pack_t;
 
     regslice #(
         .TYPE             (r_pack_t),
