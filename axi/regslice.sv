@@ -38,19 +38,61 @@ module axi_regslice #(
     axi_channel.master slave
 );
 
+localparam SZ_master_ar_addr = $bits(master.ar_addr);
+localparam SZ_master_ar_burst = $bits(master.ar_burst);
+localparam SZ_master_ar_cache = $bits(master.ar_cache);
+localparam SZ_master_ar_id = $bits(master.ar_id);
+localparam SZ_master_ar_len = $bits(master.ar_len);
+localparam SZ_master_ar_lock = $bits(master.ar_lock);
+localparam SZ_master_ar_prot = $bits(master.ar_prot);
+localparam SZ_master_ar_qos = $bits(master.ar_qos);
+localparam SZ_master_ar_region = $bits(master.ar_region);
+localparam SZ_master_ar_size = $bits(master.ar_size);
+localparam SZ_master_ar_user = $bits(master.ar_user);
+localparam SZ_master_aw_addr = $bits(master.aw_addr);
+localparam SZ_master_aw_burst = $bits(master.aw_burst);
+localparam SZ_master_aw_cache = $bits(master.aw_cache);
+localparam SZ_master_aw_id = $bits(master.aw_id);
+localparam SZ_master_aw_len = $bits(master.aw_len);
+localparam SZ_master_aw_lock = $bits(master.aw_lock);
+localparam SZ_master_aw_prot = $bits(master.aw_prot);
+localparam SZ_master_aw_qos = $bits(master.aw_qos);
+localparam SZ_master_aw_region = $bits(master.aw_region);
+localparam SZ_master_aw_size = $bits(master.aw_size);
+localparam SZ_master_aw_user = $bits(master.aw_user);
+localparam SZ_master_b_id = $bits(master.b_id);
+localparam SZ_master_b_user = $bits(master.b_user);
+localparam SZ_master_r_id = $bits(master.r_id);
+localparam SZ_master_r_user = $bits(master.r_user);
+localparam SZ_master_w_data = $bits(master.w_data);
+localparam SZ_master_w_last = $bits(master.w_last);
+localparam SZ_master_w_strb = $bits(master.w_strb);
+localparam SZ_master_w_user = $bits(master.w_user);
+localparam SZ_slave_ar_id = $bits(slave.ar_id);
+localparam SZ_slave_ar_user = $bits(slave.ar_user);
+localparam SZ_slave_aw_addr = $bits(slave.aw_addr);
+localparam SZ_slave_aw_id = $bits(slave.aw_id);
+localparam SZ_slave_aw_user = $bits(slave.aw_user);
+localparam SZ_slave_b_id = $bits(slave.b_id);
+localparam SZ_slave_b_resp = $bits(slave.b_resp);
+localparam SZ_slave_b_user = $bits(slave.b_user);
+localparam SZ_slave_r_data = $bits(slave.r_data);
+localparam SZ_slave_r_id = $bits(slave.r_id);
+localparam SZ_slave_r_last = $bits(slave.r_last);
+localparam SZ_slave_r_resp = $bits(slave.r_resp);
+localparam SZ_slave_r_user = $bits(slave.r_user);
+localparam SZ_slave_w_data = $bits(slave.w_data);
+localparam SZ_slave_w_user = $bits(slave.w_user);
+
     // Static checks of interface matching
-    localparam MADDR_WIDTH = $bits(master.aw_addr);
-    localparam SADDR_WIDTH = $bits(slave.aw_addr);
-   
-    // Static checks of interface matching
-    if (MADDR_WIDTH != SADDR_WIDTH ||
-        $bits(master.aw_id) != $bits(slave.aw_id) ||
-        $bits(master.w_data) != $bits(slave.w_data) ||
-        $bits(master.aw_user) != $bits(slave.aw_user) ||
-        $bits(master.w_user) != $bits(slave.w_user) ||
-        $bits(master.b_user) != $bits(slave.b_user) ||
-        $bits(master.ar_user) != $bits(slave.ar_user) ||
-        $bits(master.r_user) != $bits(slave.r_user))
+    if (SZ_master_aw_addr != SZ_slave_aw_addr ||
+        SZ_master_aw_id != SZ_slave_aw_id ||
+        SZ_master_w_data != SZ_slave_w_data ||
+        SZ_master_aw_user != SZ_slave_aw_user ||
+        SZ_master_w_user != SZ_slave_w_user ||
+        SZ_master_b_user != SZ_slave_b_user ||
+        SZ_master_ar_user != SZ_slave_ar_user ||
+        SZ_master_r_user != SZ_slave_r_user)
         $fatal(1, "Parameter mismatch");
 
     //
@@ -58,17 +100,17 @@ module axi_regslice #(
     //
 
     typedef logic [
-        ($bits(master.aw_id) > $bits(slave.aw_id) ? $bits(master.aw_id) : $bits(slave.aw_id)) +
-        $bits(master.aw_addr) +
-        $bits(master.aw_len) +
-        $bits(master.aw_size) +
-        $bits(master.aw_burst) +
-        $bits(master.aw_lock) +
-        $bits(master.aw_cache) +
-        $bits(master.aw_prot) +
-        $bits(master.aw_qos) +
-        $bits(master.aw_region) +
-        $bits(master.aw_user) : 1] aw_pack_t;
+        SZ_master_aw_id +
+        SZ_master_aw_addr +
+        SZ_master_aw_len +
+        SZ_master_aw_size +
+        SZ_master_aw_burst +
+        SZ_master_aw_lock +
+        SZ_master_aw_cache +
+        SZ_master_aw_prot +
+        SZ_master_aw_qos +
+        SZ_master_aw_region +
+        SZ_master_aw_user : 1] aw_pack_t;
 
     regslice #(
         .TYPE             (aw_pack_t),
@@ -97,10 +139,10 @@ module axi_regslice #(
     //
 
     typedef logic [
-        $bits(master.w_data) +
-        $bits(master.w_strb) +
-        $bits(master.w_last) +
-        $bits(master.w_user) : 1] w_pack_t;
+        SZ_master_w_data +
+        SZ_master_w_strb +
+        SZ_master_w_last +
+        SZ_master_w_user : 1] w_pack_t;
 
     regslice #(
         .TYPE             (w_pack_t),
@@ -123,9 +165,9 @@ module axi_regslice #(
     //
 
     typedef logic [
-        ($bits(master.b_id) > $bits(slave.b_id) ? $bits(master.b_id) : $bits(slave.b_id)) +
-        $bits(slave.b_resp) +
-        $bits(slave.b_user) : 1] b_pack_t;
+        SZ_slave_b_id +
+        SZ_slave_b_resp +
+        SZ_slave_b_user : 1] b_pack_t;
 
     regslice #(
         .TYPE             (b_pack_t),
@@ -148,17 +190,17 @@ module axi_regslice #(
     //
 
     typedef logic [
-        ($bits(master.ar_id) > $bits(slave.ar_id) ? $bits(master.ar_id) : $bits(slave.ar_id)) +
-        $bits(master.ar_addr) +
-        $bits(master.ar_len) +
-        $bits(master.ar_size) +
-        $bits(master.ar_burst) +
-        $bits(master.ar_lock) +
-        $bits(master.ar_cache) +
-        $bits(master.ar_prot) +
-        $bits(master.ar_qos) +
-        $bits(master.ar_region) +
-        $bits(master.ar_user) : 1] ar_pack_t;
+        SZ_master_ar_id +
+        SZ_master_ar_addr +
+        SZ_master_ar_len +
+        SZ_master_ar_size +
+        SZ_master_ar_burst +
+        SZ_master_ar_lock +
+        SZ_master_ar_cache +
+        SZ_master_ar_prot +
+        SZ_master_ar_qos +
+        SZ_master_ar_region +
+        SZ_master_ar_user : 1] ar_pack_t;
 
     regslice #(
         .TYPE             (ar_pack_t),
@@ -187,11 +229,11 @@ module axi_regslice #(
     //
 
     typedef logic [
-        ($bits(master.r_id) > $bits(slave.r_id) ? $bits(master.r_id) : $bits(slave.r_id)) +
-        $bits(slave.r_data) +
-        $bits(slave.r_resp) +
-        $bits(slave.r_last) +
-        $bits(slave.r_user) : 1] r_pack_t;
+        SZ_slave_r_id +
+        SZ_slave_r_data +
+        SZ_slave_r_resp +
+        SZ_slave_r_last +
+        SZ_slave_r_user : 1] r_pack_t;
 
     regslice #(
         .TYPE             (r_pack_t),
