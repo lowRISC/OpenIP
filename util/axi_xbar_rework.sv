@@ -85,8 +85,8 @@ module axi_xbar_rework #(
           .outgoing_if(master[i]),
           .incoming_openip(master_buf[i])                       
           );
-      assign mask_addr[NB_MASTER-1-i] = end_addr_i[i] - start_addr_i[i];
-      assign start_addr[NB_MASTER-1-i] = start_addr_i[i];
+      assign mask_addr[i] = end_addr_i[i] - start_addr_i[i];
+      assign start_addr[i] = start_addr_i[i];
       end
 
 axi_crossbar #(
