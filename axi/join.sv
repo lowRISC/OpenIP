@@ -25,7 +25,7 @@
  */
 
 // Connect two AXI channels together.
-module axi_join (
+module axi_chan_join (
     axi_channel.slave  master,
     axi_channel.master slave
 );

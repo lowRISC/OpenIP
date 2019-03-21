@@ -23,6 +23,10 @@
  `define SIMPLE_XBAR
 `endif
 
+`ifdef verilator
+ `define SIMPLE_XBAR
+`endif
+
 module axi_xbar_rework_wrapper (
     input wire logic clk,
     input wire logic rst_n,

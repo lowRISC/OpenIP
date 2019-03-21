@@ -107,7 +107,7 @@ module axi_crossbar #(
         ) slice (.master(slave_buf), .slave(slave[i]));
 
         for (genvar j = 0; j < MASTER_NUM; j++) begin
-            axi_join joiner(.master(demux[j].channels[i]), .slave(channels[j]));
+            axi_chan_join joiner(.master(demux[j].channels[i]), .slave(channels[j]));
         end
     end
 
