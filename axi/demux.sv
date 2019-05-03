@@ -43,34 +43,19 @@ module axi_demux_raw #(
     parameter SLAVE_NUM,
     // Ideally we would like to remove this but it is required by type of BASE and MASK
     parameter ADDR_WIDTH,
+    parameter ID_WIDTH,
     parameter ACTIVE_CNT_WIDTH = 8
 ) (
-    axi_channel.slave  master,
-    axi_channel.master slave [SLAVE_NUM],
+    input logic clk, rstn,
+    AXI_BUS.Slave  master,
+    AXI_BUS.Master slave [SLAVE_NUM],
     input logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] BASE,
     input logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] MASK
 );
 
     localparam SLAVE_WIDTH = $clog2(SLAVE_NUM);
-    localparam MADDR_WIDTH = $bits(master.aw_addr);
-   
-    // Static checks of interface matching
-    if (MADDR_WIDTH != ADDR_WIDTH ||
-        $bits(master.aw_id) != $bits(slave[0].aw_id) ||
-        $bits(master.w_data) != $bits(slave[0].w_data) ||
-        ADDR_WIDTH != $bits(slave[0].aw_addr) ||
-        $bits(master.aw_user) != $bits(slave[0].aw_user) ||
-        $bits(master.w_user) != $bits(slave[0].w_user) ||
-        $bits(master.b_user) != $bits(slave[0].b_user) ||
-        $bits(master.ar_user) != $bits(slave[0].ar_user) ||
-        $bits(master.r_user) != $bits(slave[0].r_user))
-        $fatal(1, "Parameter mismatch");
 
     // Extract clk and rstn signals from interfaces
-    logic clk;
-    logic rstn;
-    assign clk = master.clk;
-    assign rstn = master.rstn;
 
     //
     // Rearrange wires that need to be multiplexed to be packed.
@@ -182,7 +167,7 @@ module axi_demux_raw #(
     // Writing part
     //
 
-    mapping_t [2**master.ID_WIDTH-1:0] write_map;
+    mapping_t [2**ID_WIDTH-1:0] write_map;
 
     //
     // Mapping lookup and update logic
@@ -198,15 +183,15 @@ module axi_demux_raw #(
          aw_lookup.active_cnt != 2**ACTIVE_CNT_WIDTH-1));
 
     // Whether we should increase active_cnt or decrease it.
-    logic [2**master.ID_WIDTH-1:0] w_cnt_incr;
-    logic [2**master.ID_WIDTH-1:0] w_cnt_decr;
+    logic [2**ID_WIDTH-1:0] w_cnt_incr;
+    logic [2**ID_WIDTH-1:0] w_cnt_decr;
 
     // A note on this coding pattern:
     // Orginally the code here uses always_comb with a for loop here.
     // However QuestaSim will handle signals within interfaces incorrectly if they're placed in
     // always_comb block, possibly causing glitches in simulation. We need to avoid reading
     // interface signals from always_comb code until the issue is resolved.
-    for (genvar i = 0; i < 2**master.ID_WIDTH; i++) begin
+    for (genvar i = 0; i < 2**ID_WIDTH; i++) begin
         assign w_cnt_decr[i] = master.b_id == i && master.b_valid && master.b_ready;
         assign w_cnt_incr[i] = master.aw_id == i && master.aw_valid && master.aw_ready;
     end
@@ -214,11 +199,11 @@ module axi_demux_raw #(
     // Actually update the mappings
     always_ff @(posedge clk or negedge rstn)
         if (!rstn) begin
-            for (int i = 0; i < 2**master.ID_WIDTH; i++)
+            for (int i = 0; i < 2**ID_WIDTH; i++)
                 write_map[i] <= mapping_t'('0);
         end
         else begin
-            for (int i = 0; i < 2**master.ID_WIDTH; i++) begin
+            for (int i = 0; i < 2**ID_WIDTH; i++) begin
                 if (w_cnt_incr[i]) begin
                     write_map[i].active_slave <= aw_match_bin;
                     if (!w_cnt_decr[i]) write_map[i].active_cnt <= write_map[i].active_cnt + 1;
@@ -331,7 +316,7 @@ module axi_demux_raw #(
     // Reading part. Mostly similar to writing, except that we check the handshake on R channel with last set, instead
     // of checking the B channel.
     //
-    mapping_t [2**master.ID_WIDTH-1:0] read_map;
+    mapping_t [2**ID_WIDTH-1:0] read_map;
 
     mapping_t ar_lookup;
     assign ar_lookup = read_map[master.ar_id];
@@ -341,20 +326,20 @@ module axi_demux_raw #(
         (ar_lookup.active_slave == ar_match_bin &&
          ar_lookup.active_cnt != 2**ACTIVE_CNT_WIDTH-1));
 
-    logic [2**master.ID_WIDTH-1:0] r_cnt_incr;
-    logic [2**master.ID_WIDTH-1:0] r_cnt_decr;
-    for (genvar i = 0; i < 2**master.ID_WIDTH; i++) begin
+    logic [2**ID_WIDTH-1:0] r_cnt_incr;
+    logic [2**ID_WIDTH-1:0] r_cnt_decr;
+    for (genvar i = 0; i < 2**ID_WIDTH; i++) begin
         assign r_cnt_decr[i] = master.r_id == i && master.r_valid && master.r_ready && master.r_last;
         assign r_cnt_incr[i] = master.ar_id == i && master.ar_valid && master.ar_ready;
     end
 
     always_ff @(posedge clk or negedge rstn)
         if (!rstn) begin
-            for (int i = 0; i < 2**master.ID_WIDTH; i++)
+            for (int i = 0; i < 2**ID_WIDTH; i++)
                 read_map[i] <= mapping_t'('0);
         end
         else begin
-            for (int i = 0; i < 2**master.ID_WIDTH; i++) begin
+            for (int i = 0; i < 2**ID_WIDTH; i++) begin
                 if (r_cnt_incr[i]) begin
                     read_map[i].active_slave <= ar_match_bin;
                     if (!r_cnt_decr[i]) read_map[i].active_cnt <= read_map[i].active_cnt + 1;
@@ -440,31 +425,33 @@ module axi_demux #(
     parameter SLAVE_NUM,
     // Ideally we would like to remove this but it is required by type of BASE and MASK
     parameter ADDR_WIDTH,
+    parameter DATA_WIDTH,
+    parameter USER_WIDTH,
+    parameter ID_WIDTH,
     parameter ACTIVE_CNT_WIDTH = 4
 ) (
-    axi_channel.slave  master,
-    axi_channel.master slave [SLAVE_NUM],
+    input logic clk, rstn,
+    AXI_BUS.Slave  master,
+    AXI_BUS.Master slave [SLAVE_NUM],
     logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] BASE,
     logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] MASK
 );
 
-    axi_channel #(
-        .ID_WIDTH   ($bits(master.aw_id)),
-        .ADDR_WIDTH ($bits(master.aw_addr)),
-        .DATA_WIDTH ($bits(master.w_data))
-    ) master_buf (
-        master.clk,
-        master.rstn
-    ), slave_buf [SLAVE_NUM] (
-        master.clk,
-        master.rstn
-    );
+    AXI_BUS #(
+        .AXI_ID_WIDTH   (ID_WIDTH),
+        .AXI_ADDR_WIDTH (ADDR_WIDTH),
+        .AXI_DATA_WIDTH (DATA_WIDTH),
+        .AXI_USER_WIDTH (USER_WIDTH)
+    ) master_buf (), slave_buf [SLAVE_NUM] ();
 
     axi_demux_raw #(
         .SLAVE_NUM        (SLAVE_NUM),
         .ADDR_WIDTH       (ADDR_WIDTH),
+        .DATA_WIDTH       (DATA_WIDTH),
+        .USER_WIDTH       (USER_WIDTH),
+        .ID_WIDTH         (ID_WIDTH),
         .ACTIVE_CNT_WIDTH (ACTIVE_CNT_WIDTH)
-    ) mux (.master(master_buf), .slave(slave_buf), .BASE, .MASK);
+    ) mux (.clk, .rstn, .master(master_buf), .slave(slave_buf), .BASE, .MASK);
 
     axi_regslice #(
         .AW_MODE (0),
@@ -472,7 +459,7 @@ module axi_demux #(
         . B_MODE (0),
         .AR_MODE (0),
         . R_MODE (1)
-    ) master_slice (master, master_buf);
+    ) master_slice (clk, rstn, master, master_buf);
 
     for (genvar i = 0; i < SLAVE_NUM; i++) begin: slave_slice
         axi_regslice #(
@@ -481,7 +468,7 @@ module axi_demux #(
             . B_MODE (0),
             .AR_MODE (0),
             . R_MODE (2)
-        ) slice (slave_buf[i], slave[i]);
+        ) slice (clk, rstn, slave_buf[i], slave[i]);
     end
 
 endmodule

@@ -34,8 +34,9 @@ module axi_regslice #(
     parameter AR_MODE = 3,
     parameter  R_MODE = 7
 ) (
-    axi_channel.slave  master,
-    axi_channel.master slave
+    input logic clk, rstn,
+    AXI_BUS.Slave  master,
+    AXI_BUS.Master slave
 );
 
 localparam SZ_master_ar_addr = $bits(master.ar_addr);
@@ -118,8 +119,8 @@ localparam SZ_slave_w_user = $bits(slave.w_user);
         .REVERSE          ((AW_MODE & 2) != 0),
         .HIGH_PERFORMANCE ((AW_MODE & 4) != 0)
     ) awfifo (
-        .clk     (master.clk),
-        .rstn    (master.rstn),
+        .clk     (clk),
+        .rstn    (rstn),
         .w_valid (master.aw_valid),
         .w_ready (master.aw_ready),
         .w_data  ({
@@ -150,8 +151,8 @@ localparam SZ_slave_w_user = $bits(slave.w_user);
         .REVERSE          ((W_MODE & 2) != 0),
         .HIGH_PERFORMANCE ((W_MODE & 4) != 0)
     ) wfifo (
-        .clk     (master.clk),
-        .rstn    (master.rstn),
+        .clk     (clk),
+        .rstn    (rstn),
         .w_valid (master.w_valid),
         .w_ready (master.w_ready),
         .w_data  ({master.w_data, master.w_strb, master.w_last, master.w_user}),
@@ -175,8 +176,8 @@ localparam SZ_slave_w_user = $bits(slave.w_user);
         .REVERSE          ((B_MODE & 2) != 0),
         .HIGH_PERFORMANCE ((B_MODE & 4) != 0)
     ) bfifo (
-        .clk     (master.clk),
-        .rstn    (master.rstn),
+        .clk     (clk),
+        .rstn    (rstn),
         .w_valid (slave.b_valid),
         .w_ready (slave.b_ready),
         .w_data  ({slave.b_id, slave.b_resp, slave.b_user}),
@@ -208,8 +209,8 @@ localparam SZ_slave_w_user = $bits(slave.w_user);
         .REVERSE          ((AR_MODE & 2) != 0),
         .HIGH_PERFORMANCE ((AR_MODE & 4) != 0)
     ) arfifo (
-        .clk     (master.clk),
-        .rstn    (master.rstn),
+        .clk     (clk),
+        .rstn    (rstn),
         .w_valid (master.ar_valid),
         .w_ready (master.ar_ready),
         .w_data  ({
@@ -241,8 +242,8 @@ localparam SZ_slave_w_user = $bits(slave.w_user);
         .REVERSE          ((R_MODE & 2) != 0),
         .HIGH_PERFORMANCE ((R_MODE & 4) != 0)
     ) rfifo (
-        .clk     (master.clk),
-        .rstn    (master.rstn),
+        .clk     (clk),
+        .rstn    (rstn),
         .w_valid (slave.r_valid),
         .w_ready (slave.r_ready),
         .w_data  ({slave.r_id, slave.r_data, slave.r_resp, slave.r_last, slave.r_user}),
