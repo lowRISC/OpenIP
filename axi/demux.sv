@@ -26,7 +26,7 @@
 
 `ifndef __AXI_COMMON
 `define __AXI_COMMON
-import axi_common::*;
+//import axi_common::*;
 `endif
 
 // A demultiplexer that connects a single master with multiple slaves.
