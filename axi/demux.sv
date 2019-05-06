@@ -48,7 +48,7 @@ module axi_demux_raw #(
 ) (
     input logic clk, rstn,
     AXI_BUS.Slave  master,
-    AXI_BUS.Master slave [SLAVE_NUM],
+    AXI_BUS.Master slave [SLAVE_NUM-1:0],
     input logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] BASE,
     input logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] MASK
 );
@@ -432,7 +432,7 @@ module axi_demux #(
 ) (
     input logic clk, rstn,
     AXI_BUS.Slave  master,
-    AXI_BUS.Master slave [SLAVE_NUM],
+    AXI_BUS.Master slave [SLAVE_NUM-1:0],
     logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] BASE,
     logic [SLAVE_NUM-1:0][ADDR_WIDTH-1:0] MASK
 );
