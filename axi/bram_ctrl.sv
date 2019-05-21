@@ -30,11 +30,15 @@
 //     read/write request every cycle). Set this parameter to 0 will turn off high performance mode, reducing a few
 //     register usages.
 module axi_bram_ctrl #(
+    parameter ADDR_WIDTH     ,
     parameter DATA_WIDTH     ,
+    parameter ID_WIDTH       ,
+    parameter USER_WIDTH     ,
     parameter BRAM_ADDR_WIDTH,
     parameter HIGH_PERFORMANCE = 1
 ) (
-    axi_channel.slave               master,
+    input logic                     clk, rstn,
+    AXI_BUS.Slave                   master,
 
     output                          bram_en,
     output [DATA_WIDTH/8-1:0]       bram_we,
@@ -44,25 +48,35 @@ module axi_bram_ctrl #(
 );
 
     axi_lite_channel #(
-        .ADDR_WIDTH  (master.ADDR_WIDTH),
+        .ADDR_WIDTH  (ADDR_WIDTH),
         .DATA_WIDTH  (DATA_WIDTH),
         .RELAX_CHECK (1'b1)
     ) channel (
-        .clk  (master.clk),
-        .rstn (master.rstn)
+        .clk (clk),
+        .rstn (rstn)
     );
 
     axi_to_lite #(
-        .HIGH_PERFORMANCE (HIGH_PERFORMANCE)
+        .ID_WIDTH         ( ID_WIDTH         ),
+        .ADDR_WIDTH       ( ADDR_WIDTH       ),
+        .DATA_WIDTH       ( DATA_WIDTH       ),
+        .BRAM_ADDR_WIDTH  ( BRAM_ADDR_WIDTH  ),
+        .USER_WIDTH       ( USER_WIDTH       ),
+        .HIGH_PERFORMANCE ( HIGH_PERFORMANCE )
     ) bridge (
+        .clk,
+        .rstn,
         .master (master),
         .slave  (channel)
     );
 
     axi_lite_bram_ctrl #(
+        .ADDR_WIDTH       ( ADDR_WIDTH       ),
         .DATA_WIDTH       (DATA_WIDTH),
         .BRAM_ADDR_WIDTH  (BRAM_ADDR_WIDTH)
     ) controller (
+        .clk,
+        .rstn,
         .master (channel),
         .*
     );

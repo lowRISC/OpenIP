@@ -25,10 +25,14 @@
  */
 
 // A component that converts an AXI-lite interface to a BRAM interface.
+// This version modified by jrrk2 for Ariane interface compatibility, and to bring out a byte oriented address.
+
 module axi_lite_bram_ctrl #(
+    parameter ADDR_WIDTH     ,
     parameter DATA_WIDTH     ,
     parameter BRAM_ADDR_WIDTH
 ) (
+    input                        clk, rstn,
     axi_lite_channel.slave       master,
 
     output                       bram_en,
@@ -39,20 +43,6 @@ module axi_lite_bram_ctrl #(
 );
 
     localparam STRB_WIDTH        = DATA_WIDTH / 8;
-    localparam UNUSED_ADDR_WIDTH = $clog2(STRB_WIDTH);
-
-    // Static checks of interface matching
-    // We currently don't strictly enforce UNUSED_ADDR_WIDTH + BRAM_ADDR_WIDTH == master.ADDR_WIDTH and use truncation
-    // behaviour instead.
-    if (DATA_WIDTH != master.DATA_WIDTH ||
-        UNUSED_ADDR_WIDTH + BRAM_ADDR_WIDTH > master.ADDR_WIDTH)
-        $fatal(1, "ADDR_WIDTH and/or DATA_WIDTH mismatch");
-
-    // Extract clk and rstn signals from interfaces
-    logic clk;
-    logic rstn;
-    assign clk = master.clk;
-    assign rstn = master.rstn;
 
     // High-level description of how this module works:
     // This BRAM controller only has a single port for both read/write, which means that it needs to serialise
@@ -80,7 +70,7 @@ module axi_lite_bram_ctrl #(
         .rstn    (rstn),
         .w_valid (master.aw_valid),
         .w_ready (master.aw_ready),
-        .w_data  (master.aw_addr[UNUSED_ADDR_WIDTH +: BRAM_ADDR_WIDTH]),
+        .w_data  (master.aw_addr[BRAM_ADDR_WIDTH-1:0]),
         .r_valid (aw_valid),
         .r_ready (aw_ready),
         .r_data  (aw_addr)
@@ -121,7 +111,7 @@ module axi_lite_bram_ctrl #(
         .rstn    (rstn),
         .w_valid (master.ar_valid),
         .w_ready (master.ar_ready),
-        .w_data  (master.ar_addr[UNUSED_ADDR_WIDTH +: BRAM_ADDR_WIDTH]),
+        .w_data  (master.ar_addr[BRAM_ADDR_WIDTH-1:0]),
         .r_valid (ar_valid),
         .r_ready (ar_ready),
         .r_data  (ar_addr)
